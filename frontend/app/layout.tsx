@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { HeroHeader } from "@/components/navigation/navbar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const notoSans = Noto_Sans({ variable: "--font-sans" });
 
@@ -39,8 +40,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <HeroHeader />
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
           </ThemeProvider>
         </body>
       </html>
