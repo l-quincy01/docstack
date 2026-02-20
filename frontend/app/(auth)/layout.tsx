@@ -14,7 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     >
       <div className="flex min-h-scree  w-full">
         <AppSidebar variant="floating" collapsible="icon" />
-        <main className="flex-1  p-4 mx-2 ">
+        <main className="flex-1  p-4 mx-2 container">
           <SiteHeader />
           {children}
         </main>

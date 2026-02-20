@@ -1,18 +1,26 @@
+import { ca } from "date-fns/locale";
+import Link from "next/link";
 import React from "react";
 
 interface props {
+  documentId: string;
   name: string;
   date: string;
   topic: string;
   thumbnail: string;
 }
+
 interface data {
   cardData: props;
+  topicId: string;
 }
 
-export default function DocumentCard({ cardData }: data) {
+export default function DocumentCard({ cardData, topicId }: data) {
   return (
-    <div className=" flex flex-row gap-3 flex-wrap justify-start  @lg:justify-start ">
+    <Link
+      href={`/topics/${topicId}/${cardData.documentId}`}
+      className=" flex flex-row gap-3 flex-wrap justify-start  @lg:justify-start "
+    >
       <div className="flex flex-col  min-w-[8rem] max-w-[14rem]  rounded-xl shadow-sm hover:shadow-md border  transition-all cursor-pointer">
         <div className="w-full aspect-[16/10] overflow-hidden rounded-t-xl">
           <img
@@ -34,6 +42,6 @@ export default function DocumentCard({ cardData }: data) {
           <div className="text-xs text-muted-foreground">{cardData.date}</div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
