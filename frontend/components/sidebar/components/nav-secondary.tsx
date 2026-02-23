@@ -28,6 +28,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
+  File,
   Maximize2,
   Minimize2,
   Minus,
@@ -37,6 +38,8 @@ import {
   Timer,
   TimerIcon,
   ToolCase,
+  Trash2,
+  Undo2,
 } from "lucide-react";
 
 import { useRef, useState, useEffect } from "react";
@@ -61,6 +64,24 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
 
 export function NavSecondary() {
   const { isMobile } = useSidebar();
@@ -110,6 +131,49 @@ export function NavSecondary() {
 
   return (
     <SidebarMenu>
+      <SidebarMenuItem>
+        <Popover>
+          <PopoverTrigger asChild>
+            <SidebarMenuButton tooltip="Utilities">
+              <span className="mr-2">
+                <Trash2 />
+              </span>
+              <span>Trash </span>
+            </SidebarMenuButton>
+          </PopoverTrigger>
+
+          <PopoverContent className="w-fit ml-16">
+            <Command className=" w-md rounded-sm ">
+              <CommandInput
+                className="border-none"
+                placeholder="Search deleted documents..."
+              />
+              <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandGroup heading="Deleted Documents">
+                  <CommandItem>
+                    <div className="w-full flex flex-row justify-between items-center">
+                      <div className="inline-flex items-center gap-2">
+                        <File size={18} />
+                        Name of Document
+                      </div>
+                      <div className="inline-flex items-center gap-2">
+                        <div className="p-2 cursor-pointer hover:bg-muted rounded-lg">
+                          <Undo2 size={18} />
+                        </div>
+                        <div className="p-2 cursor-pointer hover:bg-muted rounded-lg">
+                          <Trash2 size={18} />
+                        </div>
+                      </div>
+                    </div>
+                  </CommandItem>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </SidebarMenuItem>
+
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
