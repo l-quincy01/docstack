@@ -1,0 +1,43 @@
+"use client";
+
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import Link from "next/link";
+import { ReactNode } from "react";
+
+export function NavMain({
+  items,
+}: {
+  items: {
+    title: string;
+    url: string;
+    icon?: ReactNode;
+  }[];
+}) {
+  return (
+    <SidebarGroup>
+      <SidebarGroupContent className="flex flex-col gap-2">
+        <SidebarMenu>
+          {items.map((item, index) => (
+            <SidebarMenuItem key={index}>
+              <SidebarMenuButton tooltip={item.title}>
+                <Link
+                  href={item.url}
+                  className="flex flex-row gap-2 items-center"
+                >
+                  {item.icon && <span className="mr-2">{item.icon}</span>}
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+}

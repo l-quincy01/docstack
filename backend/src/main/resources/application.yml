@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: docstack
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/appdb
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://full-mastodon-46.clerk.accounts.dev
+
+clerk:
+  issuer: ${CLERK_ISSUER}
+  jwks-url: ${CLERK_JWKS_URL}
+  secret-key: ${CLERK_SECRET_KEY}
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG

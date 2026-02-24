@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { HeroHeader } from "@/components/navigation/navbar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const notoSans = Noto_Sans({ variable: "--font-sans" });
 
@@ -29,7 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider signInUrl="/login">
-      <html lang="en" className={notoSans.variable}>
+      <html
+        lang="en"
+        className={notoSans.variable}
+        suppressHydrationWarning={true}
+      >
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
@@ -39,8 +44,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <HeroHeader />
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
           </ThemeProvider>
         </body>
       </html>
