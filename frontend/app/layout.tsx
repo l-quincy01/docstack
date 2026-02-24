@@ -30,7 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider signInUrl="/login">
-      <html lang="en" className={notoSans.variable}>
+      <html
+        lang="en"
+        className={notoSans.variable}
+        suppressHydrationWarning={true}
+      >
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >

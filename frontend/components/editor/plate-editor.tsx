@@ -134,20 +134,6 @@ const value = normalizeNodeId([
     ],
     type: "p",
   },
-  // {
-  //   children: [
-  //     {
-  //       text: 'Block-level suggestions are also supported for broader feedback.',
-  //     },
-  //   ],
-  //   suggestion: {
-  //     suggestionId: 'suggestionBlock1',
-  //     type: 'block',
-  //     userId: 'charlie',
-  //   },
-  //   type: 'p',
-  // },
-  // AI Section
   {
     children: [{ text: "AI-Powered Editing" }],
     type: "h2",
@@ -184,7 +170,7 @@ const value = normalizeNodeId([
     listStyleType: "disc",
     type: "p",
   },
-  // Core Features Section (Combined)
+
   {
     children: [{ text: "Rich Content Editing" }],
     type: "h2",

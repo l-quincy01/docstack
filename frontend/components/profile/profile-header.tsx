@@ -6,7 +6,6 @@ import { Mail, University } from "lucide-react";
 interface ProfileHeaderProps {
   name: string;
   email: string;
-  school: string;
 
   avatarUrl?: string;
 }
@@ -14,7 +13,6 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({
   name,
   email,
-  school,
 
   avatarUrl,
 }: ProfileHeaderProps) {
@@ -31,13 +29,6 @@ export default function ProfileHeader({
             <div className="flex items-center gap-1 text-muted-foreground">
               <Mail className="size-4" />
               {email}
-            </div>
-
-            <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">
-              <div className="flex items-center gap-1">
-                <University className="size-4" />
-                {school}
-              </div>
             </div>
           </div>
         </div>

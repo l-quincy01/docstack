@@ -1,5 +1,7 @@
 "use client";
-import { Shield, Key, Trash2 } from "lucide-react";
+
+import { Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,89 +13,85 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { useState } from "react";
 import {
   ProfileSchema,
   type ProfileForm,
 } from "@/validations/profile.validations";
+import {
+  useDeleteMyProfile,
+  useMyProfile,
+  useUpdateMyProfile,
+} from "@/hooks/profile/useProfile";
 
-interface ProfileContentProps {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  school: string;
-}
-
-export default function ProfileContent(props: ProfileContentProps) {
-  const { id, firstName, lastName, email, phone, school } = props;
+export default function ProfileContent() {
+  const { data: profile, isLoading, isError, error } = useMyProfile();
+  const updateMutation = useUpdateMyProfile();
+  const deleteMutation = useDeleteMyProfile();
 
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfileForm>({
-    firstName,
-    lastName,
-    email,
-    phone,
-    school,
+    firstName: "",
+    lastName: "",
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
-  // keep state in sync if parent refetches
-  //   useEffect(() => {
-  //     setForm({ firstName, lastName, email, phone, school });
-  //   }, [firstName, lastName, email, phone, school]);
+  useEffect(() => {
+    if (profile) {
+      setForm({
+        firstName: profile.firstName ?? "",
+        lastName: profile.lastName ?? "",
+      });
+    }
+  }, [profile]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { id, value } = e.target;
     setForm((prev) => ({ ...prev, [id]: value }));
   }
 
-  //   async function handleSave() {
-  //     setSaving(true);
-  //     setErrors({});
+  async function handleSave() {
+    setErrors({});
 
-  //     const parsed = ProfileSchema.safeParse(form);
-  //     if (!parsed.success) {
-  //       const errs: Record<string, string> = {};
-  //       parsed.error.issues.forEach(
-  //         (i) => (errs[i.path[0] as string] = i.message)
-  //       );
-  //       setErrors(errs);
-  //       setSaving(false);
-  //       return;
-  //     }
+    const parsed = ProfileSchema.safeParse(form);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      parsed.error.issues.forEach((issue) => {
+        const key = String(issue.path[0] ?? "root");
+        fieldErrors[key] = issue.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
 
-  //     try {
-  //       await updateUser(id, parsed.data);
-  //       setEditing(false);
-  //     } catch (e: any) {
-  //       setErrors({ root: e.message ?? "Update failed" });
-  //     } finally {
-  //       setSaving(false);
-  //     }
-  //   }
+    try {
+      await updateMutation.mutateAsync(parsed.data);
+      setEditing(false);
+    } catch (e: any) {
+      setErrors({ root: e?.message ?? "Failed to save profile" });
+    }
+  }
 
-  //   async function handleDelete() {
-  //     if (!confirm("This will permanently delete your account.")) return;
+  async function handleDelete() {
+    setErrors({});
+    try {
+      await deleteMutation.mutateAsync();
+      // Optional: redirect or show a toast
+    } catch (e: any) {
+      setErrors({ root: e?.message ?? "Failed to delete account" });
+    }
+  }
 
-  //     try {
-  //       setDeleting(true);
-  //       await deleteUser(id);
-  //       window.location.href = "/";
-  //     } catch (e: any) {
-  //       alert(e.message ?? "Delete failed");
-  //     } finally {
-  //       setDeleting(false);
-  //     }
-  //   }
+  if (isLoading) return <div>Loading profile...</div>;
+
+  if (isError) {
+    return (
+      <div className="text-sm text-destructive">
+        {(error as any)?.message ?? "Failed to load profile"}
+      </div>
+    );
+  }
 
   return (
     <Tabs defaultValue="personal" className="space-y-6">
@@ -115,12 +113,27 @@ export default function ProfileContent(props: ProfileContentProps) {
 
             <div className="flex gap-2">
               {editing && (
-                <Button disabled={saving}>
-                  {saving ? "Saving..." : "Save"}
+                <Button
+                  onClick={handleSave}
+                  disabled={updateMutation.isPending}
+                >
+                  {updateMutation.isPending ? "Saving..." : "Save"}
                 </Button>
               )}
 
-              <Button variant="secondary" onClick={() => setEditing((p) => !p)}>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  // If cancelling, reset form back to server state
+                  if (editing && profile)
+                    setForm({
+                      firstName: profile.firstName,
+                      lastName: profile.lastName,
+                    });
+                  setErrors({});
+                  setEditing((p) => !p);
+                }}
+              >
                 {editing ? "Cancel" : "Edit Profile"}
               </Button>
             </div>
@@ -157,40 +170,6 @@ export default function ProfileContent(props: ProfileContentProps) {
                   <p className="text-xs text-destructive">{errors.lastName}</p>
                 )}
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  disabled={!editing}
-                />
-                {errors.email && (
-                  <p className="text-xs text-destructive">{errors.email}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  disabled={!editing}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="school">School</Label>
-              <Input
-                id="school"
-                value={form.school}
-                onChange={handleChange}
-                disabled={!editing}
-              />
             </div>
           </CardContent>
         </Card>
@@ -207,6 +186,10 @@ export default function ProfileContent(props: ProfileContentProps) {
           </CardHeader>
 
           <CardContent>
+            {errors.root && (
+              <p className="text-sm text-destructive mb-4">{errors.root}</p>
+            )}
+
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="text-base">Delete Account</Label>
@@ -215,9 +198,13 @@ export default function ProfileContent(props: ProfileContentProps) {
                 </p>
               </div>
 
-              <Button variant="destructive" disabled={deleting}>
+              <Button
+                variant="destructive"
+                disabled={deleteMutation.isPending}
+                onClick={handleDelete}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
-                {deleting ? "Deleting..." : "Delete Account"}
+                {deleteMutation.isPending ? "Deleting..." : "Delete Account"}
               </Button>
             </div>
           </CardContent>

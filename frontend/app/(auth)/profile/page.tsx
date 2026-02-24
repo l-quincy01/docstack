@@ -8,17 +8,9 @@ export default function page() {
       <ProfileHeader
         name={"name"}
         email={""}
-        school={""}
         avatarUrl={"https://i.redd.it/8ugv2z5fdj7f1.png"}
       />
-      <ProfileContent
-        id={0}
-        firstName={""}
-        lastName={""}
-        email={""}
-        phone={""}
-        school={""}
-      />
+      <ProfileContent />
     </div>
   );
 }

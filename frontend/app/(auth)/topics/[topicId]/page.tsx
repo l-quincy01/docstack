@@ -42,8 +42,6 @@ export default function page({ params }: { params: { topicId: string } }) {
     },
   ];
 
-  console.log("--------->", params.topicId);
-
   return (
     <div className="flex flex-col gap-8 ">
       <div className="flex flex-row w-full justify-center ">

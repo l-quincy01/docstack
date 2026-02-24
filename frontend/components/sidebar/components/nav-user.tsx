@@ -26,19 +26,18 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { useClerk } from "@clerk/nextjs";
+import { useMyProfile } from "@/hooks/profile/useProfile";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUser() {
+  const { data, isLoading, isError, error } = useMyProfile();
+
   const { isMobile } = useSidebar();
 
   const { signOut } = useClerk();
+
+  if (isLoading) {
+    return <div className="text-sm  text-muted">Loading</div>;
+  }
 
   return (
     <SidebarMenu>
@@ -49,14 +48,12 @@ export function NavUser({
         >
           <Link className=" inline-flex gap-2" href={"/profile"}>
             <Avatar className="h-8 w-8 rounded-lg grayscale">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={"https://i.redd.it/8ugv2z5fdj7f1.png"} />
               <AvatarFallback className="rounded-lg">CN</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
-              <span className="text-muted-foreground truncate text-xs">
-                {user.email}
-              </span>
+              <span className="truncate font-medium">{data?.email}</span>
+              <span className="text-muted-foreground truncate text-xs"></span>
             </div>
           </Link>
           <DropdownMenu>

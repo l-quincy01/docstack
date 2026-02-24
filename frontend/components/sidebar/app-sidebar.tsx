@@ -24,8 +24,6 @@ import {
 
 import Image from "next/image";
 
-// import sb_logo_dark from "@/assets/logo/sb_logo_dark.png";
-// import sb_logo_light from "@/assets/logo/sb_logo_light.png";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { NavMain } from "./components/nav-main";
@@ -95,7 +93,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarFooter>
         <NavSecondary />
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
