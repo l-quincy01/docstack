@@ -12,26 +12,6 @@ export default function Page() {
 
   const { data, isLoading, isError, error } = useMyProfile();
 
-  // useEffect(() => {
-  //   const callApi = async () => {
-  //     const token = await getToken();
-
-  //     console.log("MY TOKEN:", token);
-
-  //     if (!token) return;
-
-  //     const res = await fetch("http://localhost:8080/api/test", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     console.log("API RESPONSE:", await res.text());
-  //   };
-
-  //   callApi();
-  // }, [getToken]);
-
   function getTimeOfDayMessage(): string {
     const hour = new Date().getHours();
 

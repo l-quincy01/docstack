@@ -135,11 +135,31 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void deleteProfile(String clerkUserId) {
 
-        Profile userProfile = profileRepository
-                .findByClerkUserId(clerkUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("User profile from clerk with ID: " + clerkUserId + " not found." ));
 
-        profileRepository.delete(userProfile);
+        try {
+            restClient.delete()
+                    .uri("https://api.clerk.com/v1/users/{id}", clerkUserId)
+                    .header("Authorization", "Bearer " + clerkSecretKey)
+                    .retrieve()
+                    .toBodilessEntity();
+
+        } catch (org.springframework.web.client.HttpClientErrorException.NotFound ex) {
+
+
+            System.out.println("Clerk user already deleted: " + clerkUserId);
+
+        } catch (Exception ex) {
+
+
+            throw new ExternalServiceException(
+                    "Failed to delete Clerk user: " + ex.getMessage()
+            );
+        }
+
+
+        profileRepository.findByClerkUserId(clerkUserId)
+                .ifPresent(profileRepository::delete);
+
 
     }
 }

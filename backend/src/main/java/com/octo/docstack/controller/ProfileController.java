@@ -8,6 +8,7 @@ import com.octo.docstack.dto.ProfileUpdateRequest;
 import com.octo.docstack.service.ProfileService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,7 @@ public class ProfileController {
 
     //DELETE
     @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProfile(@AuthenticationPrincipal Jwt jwk){
         profileService.deleteProfile(jwk.getSubject());
     }

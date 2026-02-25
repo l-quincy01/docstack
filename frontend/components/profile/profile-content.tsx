@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Trash2 } from "lucide-react";
@@ -24,11 +25,16 @@ import {
   useMyProfile,
   useUpdateMyProfile,
 } from "@/hooks/profile/useProfile";
+import { useClerk } from "@clerk/nextjs";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function ProfileContent() {
   const { data: profile, isLoading, isError, error } = useMyProfile();
   const updateMutation = useUpdateMyProfile();
   const deleteMutation = useDeleteMyProfile();
+  const router = useRouter();
+  const { signOut } = useClerk();
 
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfileForm>({
@@ -77,7 +83,9 @@ export default function ProfileContent() {
     setErrors({});
     try {
       await deleteMutation.mutateAsync();
-      // Optional: redirect or show a toast
+      toast.success("Account deleted successfully");
+      await signOut();
+      router.replace("/");
     } catch (e: any) {
       setErrors({ root: e?.message ?? "Failed to delete account" });
     }
