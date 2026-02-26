@@ -1,13 +1,11 @@
 package com.octo.docstack.controller;
 
 
-import com.octo.docstack.domain.Profile;
-import com.octo.docstack.dto.ProfileCreateRequest;
-import com.octo.docstack.dto.ProfileResponse;
-import com.octo.docstack.dto.ProfileUpdateRequest;
+import com.octo.docstack.dto.profile.ProfileCreateRequest;
+import com.octo.docstack.dto.profile.ProfileResponse;
+import com.octo.docstack.dto.profile.ProfileUpdateRequest;
 import com.octo.docstack.service.ProfileService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;

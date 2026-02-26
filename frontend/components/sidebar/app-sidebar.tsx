@@ -46,23 +46,20 @@ const data = {
   ],
 };
 
-const course_data = {
-  courses: [
-    {
-      id: "1",
-      date_created: "",
-      course_title: "Lingustics",
-      module: [
-        {
-          id: "1",
-          module_name: "IsiZulu Literature",
-          url: "/topics/aa4rtc665",
-          children: [],
-        },
-      ],
-    },
-  ],
-};
+const topicData = [
+  {
+    id: "string",
+    title: "Maths",
+  },
+  {
+    id: "string",
+    title: "English",
+  },
+  {
+    id: "string",
+    title: "Biology",
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { systemTheme } = useTheme();
@@ -88,7 +85,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent className="scrollbar-hide">
         <NavMain items={data.navMain} />
-        <NavCourses courses={course_data.courses} />
+        <NavCourses />
       </SidebarContent>
 
       <SidebarFooter>

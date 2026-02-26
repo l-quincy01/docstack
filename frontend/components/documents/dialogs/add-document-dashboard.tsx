@@ -28,8 +28,12 @@ import {
   NativeSelectOptGroup,
   NativeSelectOption,
 } from "@/components/ui/native-select";
+import { useTopicsQuery } from "@/hooks/topics/useTopics";
 
 export default function AddDocumentDashboard() {
+  const { data: topics = [], isLoading, isError, error } = useTopicsQuery();
+
+  console.log("topic length", topics.length);
   return (
     <Dialog>
       <form>
@@ -54,8 +58,20 @@ export default function AddDocumentDashboard() {
             <DialogDescription>Create a new Document.</DialogDescription>
           </DialogHeader>
           <NativeSelect>
-            <NativeSelectOption value="">Select a Topic</NativeSelectOption>
-            <NativeSelectOption value="apple">Apple</NativeSelectOption>
+            {topics.length < 1 ? (
+              <div className="flex flex-row items-center gap-2">
+                No topics yet.{" "}
+                <Button type="button" variant="outline">
+                  Create Topic
+                </Button>
+              </div>
+            ) : (
+              topics.map((topic, index) => (
+                <NativeSelectOption key={index} value={`${topic.id}`}>
+                  {topic.title}
+                </NativeSelectOption>
+              ))
+            )}
           </NativeSelect>
           <FieldGroup>
             <Field>

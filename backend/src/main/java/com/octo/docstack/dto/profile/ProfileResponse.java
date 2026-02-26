@@ -1,4 +1,4 @@
-package com.octo.docstack.dto;
+package com.octo.docstack.dto.profile;
 
 
 public record ProfileResponse(

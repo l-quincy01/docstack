@@ -14,62 +14,59 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useRenameTopicMutation } from "@/hooks/topics/useTopics";
 import { toast } from "sonner";
+import { useRenameDocumentMutation } from "@/hooks/document/useDocument";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   topicId: string;
-  topicTitle: string;
+  documentId: string;
+  currentTitle: string;
 }
 
-export default function EditTopic({
+export default function EditDocument({
   open,
   onOpenChange,
   topicId,
-  topicTitle,
+  documentId,
+  currentTitle,
 }: Props) {
-  const [title, setTitle] = useState(topicTitle);
+  const [title, setTitle] = useState(currentTitle);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const renameTopicMutation = useRenameTopicMutation();
+  const renameMutation = useRenameDocumentMutation(topicId);
 
   useEffect(() => {
     if (open) {
-      setTitle(topicTitle);
+      setTitle(currentTitle);
       setFormError(null);
     }
-  }, [open, topicTitle]);
+  }, [open, currentTitle]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setFormError(null);
 
-    const cleanTitle = title.trim().replace(/\s+/g, " ");
-
-    if (!cleanTitle) {
-      setFormError("Topic name is required");
+    const clean = title.trim().replace(/\s+/g, " ");
+    if (!clean) {
+      setFormError("Document name is required");
       return;
     }
 
-    if (cleanTitle === topicTitle.trim()) {
+    if (clean === currentTitle.trim()) {
       onOpenChange(false);
       return;
     }
 
     try {
-      await renameTopicMutation.mutateAsync({
-        topicId,
-        title: cleanTitle,
-      });
-
-      toast.success("Topic renamed");
+      await renameMutation.mutateAsync({ documentId, title: clean });
+      toast.success("Document renamed");
       onOpenChange(false);
     } catch (e: any) {
-      const message = e?.message ?? "Failed to rename topic";
-      setFormError(message);
-      toast.error(message);
+      const msg = e?.message ?? "Failed to rename document";
+      setFormError(msg);
+      toast.error(msg);
     }
   }
 
@@ -78,20 +75,18 @@ export default function EditTopic({
       <DialogContent className="sm:max-w-sm">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Rename Topic</DialogTitle>
-            <DialogDescription>Rename your topic.</DialogDescription>
+            <DialogTitle>Rename Document</DialogTitle>
+            <DialogDescription>Update the document name.</DialogDescription>
           </DialogHeader>
 
           <FieldGroup className="mt-4">
             <Field>
-              <Label htmlFor={`topic-name-${topicId}`}>Topic Name</Label>
+              <Label htmlFor={`doc-name-${documentId}`}>Document Name</Label>
               <Input
-                id={`topic-name-${topicId}`}
-                name="name"
+                id={`doc-name-${documentId}`}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Name of Topic"
-                disabled={renameTopicMutation.isPending}
+                disabled={renameMutation.isPending}
                 autoFocus
               />
               {formError ? (
@@ -105,13 +100,13 @@ export default function EditTopic({
               <Button
                 type="button"
                 variant="outline"
-                disabled={renameTopicMutation.isPending}
+                disabled={renameMutation.isPending}
               >
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={renameTopicMutation.isPending}>
-              {renameTopicMutation.isPending ? "Renaming..." : "Rename"}
+            <Button type="submit" disabled={renameMutation.isPending}>
+              {renameMutation.isPending ? "Renaming..." : "Rename"}
             </Button>
           </DialogFooter>
         </form>

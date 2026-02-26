@@ -1,0 +1,55 @@
+package com.octo.docstack.entities;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+
+import java.time.Instant;
+
+@EnableMongoAuditing
+@CompoundIndex(name = "user_topic_idx", def = "{'userId': 1, 'topicId': 1}")
+@Document(collection = "documents")
+public class DocItem {
+
+    @Id
+    private String id;
+
+    private String userId;
+    private String topicId;
+
+    private String title;
+    private DocItemStatus status  = DocItemStatus.ACTIVE;
+    private String content;
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
+
+    public String getId() { return id; }
+    public String getUserId() { return userId; }
+    public String getTopicId() { return topicId; }
+    public DocItemStatus getStatus() { return status; }
+    public String getTitle() { return title; }
+    public String getContent() { return content; }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setId(String id) { this.id = id; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public void setTopicId(String topicId) { this.topicId = topicId; }
+    public void setStatus(DocItemStatus status) { this.status = status; }
+    public void setTitle(String title) { this.title = title; }
+    public void setContent(String content) { this.content = content; }
+    public void  setCreatedAt(Instant createdAt){this.createdAt = createdAt;}
+    public void  setUpdatedAt(Instant updatedAt){this.updatedAt = updatedAt;}
+}

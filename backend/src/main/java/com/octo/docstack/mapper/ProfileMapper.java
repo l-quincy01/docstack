@@ -1,7 +1,7 @@
 package com.octo.docstack.mapper;
 
 import com.octo.docstack.domain.Profile;
-import com.octo.docstack.dto.ProfileResponse;
+import com.octo.docstack.dto.profile.ProfileResponse;
 import org.springframework.stereotype.Component;
 
 @Component

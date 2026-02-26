@@ -1,9 +1,9 @@
 package com.octo.docstack.service.impl;
 
 import com.octo.docstack.domain.Profile;
-import com.octo.docstack.dto.ProfileCreateRequest;
-import com.octo.docstack.dto.ProfileResponse;
-import com.octo.docstack.dto.ProfileUpdateRequest;
+import com.octo.docstack.dto.profile.ProfileCreateRequest;
+import com.octo.docstack.dto.profile.ProfileResponse;
+import com.octo.docstack.dto.profile.ProfileUpdateRequest;
 import com.octo.docstack.exception.ExternalServiceException;
 import com.octo.docstack.exception.ResourceNotFoundException;
 import com.octo.docstack.mapper.ProfileMapper;

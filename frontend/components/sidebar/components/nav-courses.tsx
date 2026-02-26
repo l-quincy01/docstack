@@ -1,81 +1,66 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
-  // SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  // useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  CirclePlus,
-  CopyPlus,
-  EllipsisVertical,
-  FolderPlus,
-  Library,
-  LibraryBig,
-  Plus,
-  PlusCircle,
-} from "lucide-react";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-import { ChevronRight, House, MessageCircle, File, Folder } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { IconDots, IconTrash, IconPencil } from "@tabler/icons-react";
 import AddTopic from "../dialogs/add-topic";
-import { IconDots, IconTrash } from "@tabler/icons-react";
+import EditTopic from "../dialogs/edit-topic";
+import {
+  useDeleteTopicMutation,
+  useTopicsQuery,
+} from "@/hooks/topics/useTopics";
+import { toast } from "sonner";
+import { usePathname, useRouter } from "next/navigation";
 
-interface props {
-  courses: course[];
-}
+export function NavCourses() {
+  const { data: topics = [], isLoading, isError, error } = useTopicsQuery();
+  const deleteTopicMutation = useDeleteTopicMutation();
+  const router = useRouter();
+  const pathname = usePathname();
 
-export interface course {
-  id: string;
-  course_title: string;
-  module: TreeNode[];
-  date_created: string;
-}
+  const [renameOpenTopicId, setRenameOpenTopicId] = useState<string | null>(
+    null
+  );
 
-type TreeNode = {
-  id: string;
-  module_name: string;
-  url: string;
-  children?: TreeNode[];
-};
+  async function handleDeleteTopic(topicId: string, topicTitle: string) {
+    const ok = window.confirm(
+      `Delete topic "${topicTitle}"? This will also permanently delete its documents.`
+    );
+    if (!ok) return;
 
-export function NavCourses({ courses }: props) {
-  // const { isMobile } = useSidebar()
+    try {
+      await deleteTopicMutation.mutateAsync(topicId);
+      toast.success(`Deleted "${topicTitle}"`);
+      if (pathname.startsWith(`/topics/${topicId}`)) {
+        router.replace("/dashboard");
+      }
+
+      if (renameOpenTopicId === topicId) {
+        setRenameOpenTopicId(null);
+      }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to delete topic");
+    }
+  }
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <span className="text-base font-semibold inline-flex ">Topics</span>
+      <span className="text-base font-semibold inline-flex">Topics</span>
 
       <SidebarMenu className="mt-4">
         <SidebarMenuItem>
@@ -83,43 +68,99 @@ export function NavCourses({ courses }: props) {
         </SidebarMenuItem>
       </SidebarMenu>
 
-      <SidebarMenu className=" ">
-        {courses.map((course, index) => (
-          <SidebarMenuItem key={index}>
-            {course.module.map((item, index) => (
-              <div key={index}>
+      <SidebarMenu>
+        {isLoading && (
+          <SidebarMenuItem>
+            <div className="text-sm text-muted-foreground px-2 py-1">
+              Loading topics...
+            </div>
+          </SidebarMenuItem>
+        )}
+
+        {isError && (
+          <SidebarMenuItem>
+            <div className="text-sm text-destructive px-2 py-1">
+              {(error as Error)?.message ?? "Failed to load topics"}
+            </div>
+          </SidebarMenuItem>
+        )}
+
+        {!isLoading && !isError && topics.length === 0 && (
+          <SidebarMenuItem>
+            <div className="text-sm text-muted-foreground px-2 py-1">
+              No topics yet
+            </div>
+          </SidebarMenuItem>
+        )}
+
+        {topics.map((topic) => {
+          const deletingThisTopic =
+            deleteTopicMutation.isPending &&
+            deleteTopicMutation.variables === topic.id;
+
+          const renameOpen = renameOpenTopicId === topic.id;
+
+          return (
+            <SidebarMenuItem key={topic.id}>
+              <div className="flex items-center gap-1 w-full">
                 <SidebarMenuButton
-                  key={index}
-                  // isActive={isActive}
-                  className="data-[active=true]:bg-transparent"
+                  className="data-[active=true]:bg-transparent flex-1"
                   asChild
                 >
-                  <Link href={item.url}>
-                    {/* <File /> */}
-                    <div className={`line-clamp-1 `}>{item.module_name}</div>
+                  <Link href={`/topics/${topic.id}`}>
+                    <div className="line-clamp-1">{topic.title}</div>
                   </Link>
                 </SidebarMenuButton>
-                <DropdownMenu>
+
+                <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuAction
                       showOnHover
                       className="data-[state=open]:bg-accent rounded-sm"
+                      disabled={deletingThisTopic}
                     >
-                      <IconDots />
+                      <IconDots size={16} />
                       <span className="sr-only">More</span>
                     </SidebarMenuAction>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-24 rounded-lg">
-                    <DropdownMenuItem variant="destructive">
-                      <IconTrash />
-                      <span>Delete</span>
+
+                  <DropdownMenuContent className="w-36 rounded-lg" align="end">
+                    <DropdownMenuItem
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        setRenameOpenTopicId(topic.id);
+                      }}
+                      disabled={deletingThisTopic}
+                    >
+                      <IconPencil size={16} />
+                      <span>Rename</span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      onClick={() => handleDeleteTopic(topic.id, topic.title)}
+                      variant="destructive"
+                      disabled={deletingThisTopic}
+                    >
+                      <IconTrash size={16} />
+                      <span>
+                        {deletingThisTopic ? "Deleting..." : "Delete"}
+                      </span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+
+                <EditTopic
+                  open={renameOpen}
+                  onOpenChange={(open) =>
+                    setRenameOpenTopicId(open ? topic.id : null)
+                  }
+                  topicId={topic.id}
+                  topicTitle={topic.title}
+                />
               </div>
-            ))}
-          </SidebarMenuItem>
-        ))}
+            </SidebarMenuItem>
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   );

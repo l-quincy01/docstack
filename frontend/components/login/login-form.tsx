@@ -91,27 +91,6 @@ export function LoginForm({
     }
   }
 
-  // async function onVerify(e: React.FormEvent) {
-  //   e.preventDefault();
-  //   if (!ready) return;
-  //   setSubmitting(true);
-  //   setError(null);
-  //   try {
-  //     const res = await signUp!.attemptEmailAddressVerification({
-  //       code: verifyCode,
-  //     });
-  //     if (res.status === "complete") {
-  //       await setActiveFromSignUp!({ session: res.createdSessionId });
-  //       router.push("/dashboard");
-  //     } else {
-  //       setError("Verification not complete.");
-  //     }
-  //   } catch (err: any) {
-  //     setError(err?.errors?.[0]?.message ?? "Invalid code");
-  //   } finally {
-  //     setSubmitting(false);
-  //   }
-  // }
   async function onVerify(e: React.FormEvent) {
     e.preventDefault();
     if (!ready) return;

@@ -132,7 +132,6 @@ export default function ProfileContent() {
               <Button
                 variant="secondary"
                 onClick={() => {
-                  // If cancelling, reset form back to server state
                   if (editing && profile)
                     setForm({
                       firstName: profile.firstName,
