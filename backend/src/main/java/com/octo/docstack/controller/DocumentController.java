@@ -5,6 +5,7 @@ package com.octo.docstack.controller;
 import com.octo.docstack.common.CurrentUserService;
 import com.octo.docstack.dto.document.*;
 import com.octo.docstack.entities.DocItem;
+import com.octo.docstack.entities.DocItemStatus;
 import com.octo.docstack.mapper.DocumentMapper;
 import com.octo.docstack.service.DocumentService;
 import jakarta.validation.Valid;
@@ -40,8 +41,30 @@ public class DocumentController {
     ) {
         String userId = currentUserService.getCurrentUserId(authentication);
         DocItem created = documentService.create(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(documentMapper.toResponse(created));
+        return ResponseEntity.status(HttpStatus.CREATED).body(documentMapper.toDocumentResponse(created));
     }
+
+    @GetMapping
+    public ResponseEntity<List<DocumentCardResponse>> listDocuments(
+            @RequestParam(required = false) DocItemStatus status,
+            Authentication authentication
+    ) {
+        String userId = authentication.getName();
+
+        if (status == null) {
+            throw new RuntimeException("Document status cannot be null");
+        }
+
+        List<DocumentCardResponse> res =  documentService.listByStatus(userId, status)
+                .stream()
+                .map(documentMapper::toCardResponse)
+                .toList();
+
+        return ResponseEntity.ok(res) ;
+
+    }
+
+
 
 
 
@@ -67,7 +90,7 @@ public class DocumentController {
     ) {
         String userId = currentUserService.getCurrentUserId(authentication);
         DocItem doc = documentService.getById(userId, documentId);
-        return ResponseEntity.ok(documentMapper.toResponse(doc));
+        return ResponseEntity.ok(documentMapper.toDocumentResponse(doc));
     }
 
     @PatchMapping("/{documentId}")
@@ -78,7 +101,7 @@ public class DocumentController {
     ) {
         String userId = currentUserService.getCurrentUserId(authentication);
         DocItem updated = documentService.update(userId, documentId, request);
-        return ResponseEntity.ok(documentMapper.toResponse(updated));
+        return ResponseEntity.ok(documentMapper.toDocumentResponse(updated));
     }
 
     @PatchMapping("/{documentId}/trash")
@@ -102,11 +125,11 @@ public class DocumentController {
     }
 
     @GetMapping("/trash")
-    public ResponseEntity<List<DocumentResponse>> listTrash(Authentication authentication) {
+    public ResponseEntity<List<DocumentCardResponse>> listTrash(Authentication authentication) {
         String userId = currentUserService.getCurrentUserId(authentication);
-        List<DocumentResponse> res = documentService.listTrash(userId)
+        List<DocumentCardResponse> res = documentService.listTrash(userId)
                 .stream()
-                .map(documentMapper::toResponse)
+                .map(documentMapper::toCardResponse)
                 .toList();
 
         return ResponseEntity.ok(res);

@@ -7,6 +7,7 @@ public class DocumentResponse {
 
     private String id;
     private String topicId;
+    private String topicTitle;
     private String title;
     private String content;
     private DocItemStatus status;
@@ -18,6 +19,7 @@ public class DocumentResponse {
     public DocumentResponse(
             String id,
             String topicId,
+            String topicTitle,
             String title,
             String content,
             DocItemStatus status,
@@ -26,6 +28,7 @@ public class DocumentResponse {
     ) {
         this.id = id;
         this.topicId = topicId;
+        this.topicTitle = topicTitle;
         this.title = title;
         this.content = content;
         this.status = status;
@@ -35,6 +38,7 @@ public class DocumentResponse {
 
     public String getId() { return id; }
     public String getTopicId() { return topicId; }
+    public String getTopicTitle() { return topicTitle; }
     public String getTitle() { return title; }
     public String getContent() { return content; }
     public DocItemStatus getStatus() { return status; }
@@ -43,6 +47,7 @@ public class DocumentResponse {
 
     public void setId(String id) { this.id = id; }
     public void setTopicId(String topicId) { this.topicId = topicId; }
+    public void setTopicTitle(String topicTitle) { this.topicTitle = topicTitle; }
     public void setTitle(String title) { this.title = title; }
     public void setContent(String content) { this.content = content; }
     public void setStatus(DocItemStatus status) { this.status = status; }

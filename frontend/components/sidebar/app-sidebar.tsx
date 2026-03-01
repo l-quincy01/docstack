@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { IconSettings } from "@tabler/icons-react";
 
 import {
   Sidebar,
@@ -13,30 +12,15 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import {
-  CalendarDays,
-  FileStack,
-  House,
-  LayoutDashboard,
-  LibraryBig,
-  MessageCircle,
-} from "lucide-react";
+import { FileStack, LayoutDashboard } from "lucide-react";
 
-import Image from "next/image";
-
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import { NavMain } from "./components/nav-main";
-import { NavCourses } from "./components/nav-courses";
+import { NavTopics } from "./components/nav-topics";
 import { NavSecondary } from "./components/nav-secondary";
 import { NavUser } from "./components/nav-user";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -46,24 +30,7 @@ const data = {
   ],
 };
 
-const topicData = [
-  {
-    id: "string",
-    title: "Maths",
-  },
-  {
-    id: "string",
-    title: "English",
-  },
-  {
-    id: "string",
-    title: "Biology",
-  },
-];
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { systemTheme } = useTheme();
-
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -85,7 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent className="scrollbar-hide">
         <NavMain items={data.navMain} />
-        <NavCourses />
+        <NavTopics />
       </SidebarContent>
 
       <SidebarFooter>

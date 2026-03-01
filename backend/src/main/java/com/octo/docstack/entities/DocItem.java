@@ -19,7 +19,7 @@ public class DocItem {
 
     private String userId;
     private String topicId;
-
+    private String topicTitle ;
     private String title;
     private DocItemStatus status  = DocItemStatus.ACTIVE;
     private String content;
@@ -32,6 +32,7 @@ public class DocItem {
     public String getId() { return id; }
     public String getUserId() { return userId; }
     public String getTopicId() { return topicId; }
+    public String getTopicTitle() { return topicTitle; }
     public DocItemStatus getStatus() { return status; }
     public String getTitle() { return title; }
     public String getContent() { return content; }
@@ -47,6 +48,7 @@ public class DocItem {
     public void setId(String id) { this.id = id; }
     public void setUserId(String userId) { this.userId = userId; }
     public void setTopicId(String topicId) { this.topicId = topicId; }
+    public void setTopicTitle(String topicTitle) { this.topicTitle = topicTitle; }
     public void setStatus(DocItemStatus status) { this.status = status; }
     public void setTitle(String title) { this.title = title; }
     public void setContent(String content) { this.content = content; }

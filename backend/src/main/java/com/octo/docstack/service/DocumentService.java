@@ -1,11 +1,10 @@
 package com.octo.docstack.service;
 
-
-
 import com.octo.docstack.dto.document.CreateDocumentRequest;
 import com.octo.docstack.dto.document.UpdateDocumentRequest;
 import com.octo.docstack.entities.DocItem;
 import com.octo.docstack.entities.DocItemStatus;
+import com.octo.docstack.entities.TopicTitleProjection;
 import com.octo.docstack.exception.ResourceNotFoundException;
 import com.octo.docstack.repository.DocumentRepository;
 
@@ -27,12 +26,18 @@ public class DocumentService {
     }
 
     public DocItem create(String userId, CreateDocumentRequest req) {
-        String topicId = req.getTopicId();
-        assertTopicOwnedByUser(userId, topicId);
 
+        String topicId = req.getTopicId();
+
+        String topicTitle = topicRepository
+                .findProjectedByIdAndUserId(topicId, userId)
+                .map(TopicTitleProjection::getTitle)
+                .orElseThrow(() -> new ResourceNotFoundException("Topic not found"));
+        System.out.println("Topic title:" + topicTitle);
         DocItem doc = new DocItem();
         doc.setUserId(userId);
         doc.setTopicId(topicId);
+        doc.setTopicTitle(topicTitle);
         doc.setTitle(normaliseTitle(req.getTitle()));
         doc.setContent(req.getContent() == null ? "" : req.getContent());
         doc.setStatus(DocItemStatus.ACTIVE);
@@ -64,7 +69,6 @@ public class DocumentService {
     public DocItem update(String userId, String documentId, UpdateDocumentRequest req) {
         DocItem doc = getById(userId, documentId);
 
-
         if (doc.getStatus() == DocItemStatus.TRASHED) {
             throw new IllegalArgumentException("Cannot edit a trashed document. Recover it first.");
         }
@@ -82,7 +86,9 @@ public class DocumentService {
     public void trash(String userId, String documentId) {
         DocItem doc = getById(userId, documentId);
 
-        if (doc.getStatus() == DocItemStatus.TRASHED) return;
+        if (doc.getStatus() == DocItemStatus.TRASHED) {
+            return;
+        }
 
         doc.setStatus(DocItemStatus.TRASHED);
         documentRepository.save(doc);
@@ -91,11 +97,17 @@ public class DocumentService {
     public void recover(String userId, String documentId) {
         DocItem doc = getById(userId, documentId);
 
-
         assertTopicOwnedByUser(userId, doc.getTopicId());
 
         doc.setStatus(DocItemStatus.ACTIVE);
         documentRepository.save(doc);
+    }
+
+    public List<DocItem> listByStatus(String userId, DocItemStatus status) {
+        return documentRepository.findByUserIdAndStatusOrderByUpdatedAtDesc(
+                userId,
+                status
+        );
     }
 
     public List<DocItem> listTrash(String userId) {
@@ -112,13 +124,19 @@ public class DocumentService {
 
     private void assertTopicOwnedByUser(String userId, String topicId) {
         boolean ok = topicRepository.findByIdAndUserId(topicId, userId).isPresent();
-        if (!ok) throw new ResourceNotFoundException("Topic not found");
+        if (!ok) {
+            throw new ResourceNotFoundException("Topic not found");
+        }
     }
 
     private String normaliseTitle(String title) {
-        if (!StringUtils.hasText(title)) throw new IllegalArgumentException("Title is required");
+        if (!StringUtils.hasText(title)) {
+            throw new IllegalArgumentException("Title is required");
+        }
         String cleaned = title.trim().replaceAll("\\s+", " ");
-        if (cleaned.length() > 120) throw new IllegalArgumentException("Title must be 120 characters or less");
+        if (cleaned.length() > 120) {
+            throw new IllegalArgumentException("Title must be 120 characters or less");
+        }
         return cleaned;
     }
 }

@@ -34,4 +34,6 @@ public interface DocumentRepository extends MongoRepository<DocItem, String> {
             String userId,
             DocItemStatus status
     );
+
+
 }

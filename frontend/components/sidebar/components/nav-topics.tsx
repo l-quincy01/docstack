@@ -11,6 +11,7 @@ import {
 
 import {
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
@@ -27,7 +28,7 @@ import {
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 
-export function NavCourses() {
+export function NavTopics() {
   const { data: topics = [], isLoading, isError, error } = useTopicsQuery();
   const deleteTopicMutation = useDeleteTopicMutation();
   const router = useRouter();
@@ -93,6 +94,11 @@ export function NavCourses() {
           </SidebarMenuItem>
         )}
 
+        <SidebarMenuItem>
+          <div className="text-sm text-muted-foreground px-2 py-1">
+            Your topics
+          </div>
+        </SidebarMenuItem>
         {topics.map((topic) => {
           const deletingThisTopic =
             deleteTopicMutation.isPending &&
@@ -108,7 +114,7 @@ export function NavCourses() {
                   asChild
                 >
                   <Link href={`/topics/${topic.id}`}>
-                    <div className="line-clamp-1">{topic.title}</div>
+                    <div className="line-clamp-1 font-bold">{topic.title}</div>
                   </Link>
                 </SidebarMenuButton>
 

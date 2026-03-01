@@ -3,6 +3,7 @@
 import AddDocument from "@/components/documents/dialogs/add-document";
 import DocumentCard from "@/components/documents/document-card";
 import { useDocumentsByTopicQuery } from "@/hooks/document/useDocument";
+import { useTopicsQuery } from "@/hooks/topics/useTopics";
 import { useParams } from "next/navigation";
 import React from "react";
 
@@ -12,18 +13,25 @@ export default function Page() {
   const topicId = params.topicId;
 
   const {
+    data: topics = [],
+    isLoading: isTopicLoading,
+    isError: isTopicError,
+    error: topicError,
+  } = useTopicsQuery();
+
+  const {
     data: documents = [],
     isLoading,
     isError,
     error,
   } = useDocumentsByTopicQuery(topicId);
 
-  console.log("topicId:", topicId);
+  const topicTitle = topics.find((topic) => topic.id === topicId);
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-row w-full justify-center">
-        <div className="text-2xl font-bold">Topics</div>
+        <div className="text-2xl font-bold">{topicTitle?.title}</div>
       </div>
 
       <div className="text-muted-foreground font-bold">
@@ -45,9 +53,17 @@ export default function Page() {
       )}
 
       <div className="flex flex-row flex-wrap gap-4">
-        {documents.map((doc) => (
-          <DocumentCard key={doc.id} cardData={doc} topicId={params.topicId} />
-        ))}
+        {documents.length < 1 ? (
+          <div className="flex flex-col justify-center items-center w-full h-full">
+            No documents yet.
+          </div>
+        ) : (
+          <div>
+            {documents.map((doc) => (
+              <DocumentCard key={doc.id} cardData={doc} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 package com.octo.docstack.repository;
 
 import com.octo.docstack.entities.Topic;
+import com.octo.docstack.entities.TopicTitleProjection;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface TopicRepository extends MongoRepository<Topic, String> {
     boolean existsByUserIdAndTitle(String userId, String title);
 
     boolean existsByUserIdAndTitleAndIdNot(String userId, String title, String id);
+
+    Optional<TopicTitleProjection> findProjectedByIdAndUserId(String id, String userId);
 }

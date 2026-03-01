@@ -18,10 +18,11 @@ public class DocumentMapper {
             DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH)
                     .withZone(ZoneId.of("Africa/Johannesburg"));
 
-    public DocumentResponse toResponse(DocItem doc) {
+    public DocumentResponse toDocumentResponse(DocItem doc) {
         return new DocumentResponse(
                 doc.getId(),
                 doc.getTopicId(),
+                doc.getTopicTitle(),
                 doc.getTitle(),
                 doc.getContent(),
                 doc.getStatus(),
@@ -34,6 +35,7 @@ public class DocumentMapper {
         return new DocumentCardResponse(
                 doc.getId(),
                 doc.getTopicId(),
+                doc.getTopicTitle(),
                 doc.getTitle(),
                 formatCardDate(doc.getCreatedAt()),
                 formatCardDate(doc.getUpdatedAt())

@@ -19,6 +19,7 @@ export interface CreateDocumentRequest {
 export interface DocumentCardItem {
   id: string;
   topicId: string;
+  topicTitle: string;
   title: string;
   createdAt: string;
   updatedAt: string;

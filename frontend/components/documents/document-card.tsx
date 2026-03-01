@@ -17,6 +17,7 @@ import { useTrashDocumentMutation } from "@/hooks/document/useDocument";
 interface CardData {
   id: string;
   topicId: string;
+  topicTitle: string;
   title: string;
   createdAt: string;
   updatedAt: string;
@@ -59,7 +60,7 @@ export default function DocumentCard({ cardData }: { cardData: CardData }) {
               {cardData.title}
             </div>
             <div className="text-xs text-muted-foreground">
-              {"{TOPIC NAME}"}
+              {cardData.topicTitle}
             </div>
             <div className="text-xs text-muted-foreground">
               {cardData.updatedAt}

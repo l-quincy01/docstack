@@ -16,6 +16,16 @@ export async function createDocument(
   );
 }
 
+export async function getActiveDocumentsByUser(
+  token: string
+): Promise<DocumentCardItem[]> {
+  return apiFetch<DocumentCardItem[]>(
+    `/api/documents?status=ACTIVE`,
+    { method: "GET" },
+    token
+  );
+}
+
 export async function getDocumentsByTopic(
   topicId: string,
   token: string
@@ -45,4 +55,29 @@ export async function trashDocument(documentId: string, token: string) {
     { method: "PATCH" },
     token
   );
+}
+
+export async function getTrashDocuments(
+  token: string
+): Promise<DocumentCardItem[]> {
+  return apiFetch<DocumentCardItem[]>(
+    "/api/documents/trash",
+    { method: "GET" },
+    token
+  );
+}
+
+export async function recoverDocument(documentId: string, token: string) {
+  return apiFetch(
+    `/api/documents/${documentId}/recover`,
+    { method: "PATCH" },
+    token
+  );
+}
+
+export async function permanentDeleteDocument(
+  documentId: string,
+  token: string
+) {
+  return apiFetch(`/api/documents/${documentId}`, { method: "DELETE" }, token);
 }

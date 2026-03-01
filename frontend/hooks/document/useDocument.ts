@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { DocumentCardItem, DocumentItem } from "@/lib/types/document";
 import {
   createDocument,
+  getActiveDocumentsByUser,
   getDocumentsByTopic,
   renameDocument,
   trashDocument,
@@ -14,6 +15,24 @@ import {
 export const documentKeys = {
   byTopic: (topicId: string) => ["documents", "topic", topicId] as const,
 };
+
+export const userDocumentKeys = {
+  activeByUser: ["documents", "user", "ACTIVE"] as const,
+};
+
+export function useActiveDocumentsByUserQuery() {
+  const { getToken, isLoaded, userId } = useAuth();
+
+  return useQuery<DocumentCardItem[]>({
+    queryKey: userDocumentKeys.activeByUser,
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new Error("Not authenticated");
+      return getActiveDocumentsByUser(token);
+    },
+    enabled: isLoaded && !!userId,
+  });
+}
 
 export function useDocumentsByTopicQuery(topicId: string) {
   const { getToken, isLoaded, userId } = useAuth();
