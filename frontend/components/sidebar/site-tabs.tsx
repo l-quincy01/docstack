@@ -1,13 +1,24 @@
 "use client";
 
-import Link from "next/link";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useDocumentsByTopicQuery } from "@/hooks/document/useDocument";
 import { useTopicsQuery } from "@/hooks/topics/useTopics";
 import { useParams, usePathname } from "next/navigation";
-import React, { useMemo } from "react";
+import React, { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "../ui/button";
+import { Plus, X } from "lucide-react";
 
-export function SiteHeader() {
+type TabItem = {
+  id: string;
+  label: string;
+};
+
+type SiteHeaderProps = {
+  children: React.ReactNode;
+};
+
+export function SiteTabs({ children }: SiteHeaderProps) {
   const pathname = usePathname();
   const params = useParams<{ topicId?: string; documentId?: string }>();
 
@@ -22,55 +33,22 @@ export function SiteHeader() {
   const topic = topics.find((t) => t.id === topicId);
   const document = documents.find((d) => d.id === documentId);
 
-  const isDashboard = pathname === "/dashboard";
-  const isTopicPage = topicId && !documentId;
-  const isDocumentPage = topicId && documentId;
+  const [tabs, setTabs] = useState<TabItem[]>([
+    { id: "1", label: "Learn Tab 1" },
+  ]);
 
-  return (
-    <header className="mb-2 bg-background sticky w-full flex h-(--header-height) shrink-0 items-center gap-2">
-      <div className="flex flex-col justify-start gap-2  px-4">
-        <h1 className="text-base font-medium flex items-center gap-2">
-          {/* Dashboard */}
-          {isDashboard && "Dashboard"}
-
-          {/* Topic page */}
-          {isTopicPage && topic?.title}
-
-          {/* Document page */}
-          {isDocumentPage && (
-            <>
-              {topic && (
-                <Link
-                  href={`/topics/${topicId}`}
-                  className="hover:underline text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {topic.title}
-                </Link>
-              )}
-              <span>/</span>
-              <span>{document?.title ?? "Loading..."}</span>
-            </>
-          )}
-        </h1>
-      </div>
-    </header>
-  );
-}
-
-/*
- const [activeTab, setActiveTab] = useState("1");
+  const [activeTab, setActiveTab] = useState("1");
 
   const addTab = () => {
     if (tabs.length >= 5) return;
 
-    const newId = (tabs.length + 1).toString();
+    const newId = crypto.randomUUID();
 
-    const newTab = {
-      id: newId,
-      label: `Learn Tab ${newId}`,
-    };
+    setTabs((prev) => [
+      ...prev,
+      { id: newId, label: `Learn Tab ${prev.length + 1}` },
+    ]);
 
-    setTabs([...tabs, newTab]);
     setActiveTab(newId);
   };
 
@@ -84,6 +62,56 @@ export function SiteHeader() {
       setActiveTab(updated[0].id);
     }
   };
+
+  return (
+    <div className="flex flex-col justify-start gap-2 px-4 w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <div className="flex items-center">
+          <SidebarTrigger className="p-0 m-0" />
+          <TabsList className="m-0 p-0" variant="line">
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className="flex items-center gap-2"
+              >
+                {tab.label}
+
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeTab(tab.id);
+                  }}
+                  className="rounded-full p-1 hover:bg-muted cursor-pointer"
+                >
+                  <X size={14} />
+                </div>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            className="p-0"
+            onClick={addTab}
+            disabled={tabs.length >= 5}
+          >
+            <Plus size={16} />
+          </Button>
+        </div>
+
+        {tabs.map((tab) => (
+          <TabsContent key={tab.id} value={tab.id}>
+            {children}
+          </TabsContent>
+        ))}
+      </Tabs>
+    </div>
+  );
+}
+/*
+
 
 
 
