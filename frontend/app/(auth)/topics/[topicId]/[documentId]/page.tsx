@@ -12,7 +12,7 @@ export default function Page() {
 
   return (
     <div className="w-full flex flex-col justify-center  scrollbar-hide">
-      <div className="w-full flex flex-row justify-start items-center gap-2 ">
+      {/* <div className="w-full flex flex-row justify-start items-center gap-2 ">
         <div
           onClick={() => {
             router.back();
@@ -21,7 +21,7 @@ export default function Page() {
         >
           <ChevronLeft size={20} strokeWidth={1.5} /> Back
         </div>
-      </div>
+      </div> */}
 
       <PlateEditor />
       <Toaster />

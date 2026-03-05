@@ -82,13 +82,13 @@ export default function Page() {
         </div>
       )}
 
-      <div className="flex flex-row flex-wrap gap-4">
+      <div>
         {documents.length < 1 ? (
           <div className="flex flex-col justify-center items-center w-full h-full">
             No documents yet.
           </div>
         ) : (
-          <div>
+          <div className="flex flex-row flex-wrap gap-4">
             {documents.map((doc) => (
               <DocumentCard key={doc.id} cardData={doc} />
             ))}

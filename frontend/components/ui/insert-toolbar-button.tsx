@@ -59,56 +59,6 @@ type Item = {
 
 const groups: Group[] = [
   {
-    group: "Basic blocks",
-    items: [
-      {
-        icon: <PilcrowIcon />,
-        label: "Paragraph",
-        value: KEYS.p,
-      },
-      {
-        icon: <Heading1Icon />,
-        label: "Heading 1",
-        value: "h1",
-      },
-      {
-        icon: <Heading2Icon />,
-        label: "Heading 2",
-        value: "h2",
-      },
-      {
-        icon: <Heading3Icon />,
-        label: "Heading 3",
-        value: "h3",
-      },
-      {
-        icon: <TableIcon />,
-        label: "Table",
-        value: KEYS.table,
-      },
-      {
-        icon: <FileCodeIcon />,
-        label: "Code",
-        value: KEYS.codeBlock,
-      },
-      {
-        icon: <QuoteIcon />,
-        label: "Quote",
-        value: KEYS.blockquote,
-      },
-      {
-        icon: <MinusIcon />,
-        label: "Divider",
-        value: KEYS.hr,
-      },
-    ].map((item) => ({
-      ...item,
-      onSelect: (editor, value) => {
-        insertBlock(editor, value);
-      },
-    })),
-  },
-  {
     group: "Lists",
     items: [
       {
@@ -177,16 +127,6 @@ const groups: Group[] = [
         label: "Equation",
         value: KEYS.equation,
       },
-      {
-        icon: <PenToolIcon />,
-        label: "Excalidraw",
-        value: KEYS.excalidraw,
-      },
-      {
-        icon: <Code2 />,
-        label: "Code Drawing",
-        value: KEYS.codeDrawing,
-      },
     ].map((item) => ({
       ...item,
       onSelect: (editor, value) => {
@@ -208,12 +148,6 @@ const groups: Group[] = [
         label: "Date",
         value: KEYS.date,
       },
-      {
-        focusEditor: false,
-        icon: <RadicalIcon />,
-        label: "Inline Equation",
-        value: KEYS.inlineEquation,
-      },
     ].map((item) => ({
       ...item,
       onSelect: (editor, value) => {
@@ -231,14 +165,12 @@ export function InsertToolbarButton(props: DropdownMenuProps) {
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
         <ToolbarButton pressed={open} tooltip="Insert" isDropdown>
-          <PlusIcon />
+          Insert
+          {/* <PlusIcon /> */}
         </ToolbarButton>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        className="flex max-h-[500px] w-fit bg-background flex-col overflow-y-auto"
-        align="start"
-      >
+      <DropdownMenuContent>
         {groups.map(({ group, items: nestedItems }) => (
           <ToolbarMenuGroup key={group} label={group}>
             {nestedItems.map(({ icon, label, value, onSelect }) => (
