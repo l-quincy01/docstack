@@ -7,9 +7,11 @@ import type { DocumentCardItem, DocumentItem } from "@/lib/types/document";
 import {
   createDocument,
   getActiveDocumentsByUser,
+  getDocumentById,
   getDocumentsByTopic,
   renameDocument,
   trashDocument,
+  updateDocumentContent,
 } from "@/services/documents/documents.service";
 
 export const documentKeys = {
@@ -111,5 +113,33 @@ export function useTrashDocumentMutation(topicId: string) {
         (old) => (old ?? []).filter((d) => d.id !== documentId)
       );
     },
+  });
+}
+
+export function useUpdateDocumentContentMutation(documentId: string) {
+  const { getToken } = useAuth();
+
+  return useMutation({
+    mutationFn: async (content: unknown) => {
+      const token = await getToken();
+      if (!token) throw new Error("Not authenticated");
+
+      return updateDocumentContent(documentId, content, token);
+    },
+  });
+}
+
+export function useDocumentQuery(documentId: string) {
+  const { getToken, isLoaded, userId } = useAuth();
+
+  return useQuery({
+    queryKey: ["documents", documentId],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new Error("Not authenticated");
+
+      return getDocumentById(documentId, token);
+    },
+    enabled: isLoaded && !!userId && !!documentId,
   });
 }

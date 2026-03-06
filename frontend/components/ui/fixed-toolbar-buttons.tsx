@@ -9,6 +9,7 @@ import {
   CaseSensitive,
   Code2Icon,
   HighlighterIcon,
+  Images,
   ItalicIcon,
   PaintBucketIcon,
   StrikethroughIcon,
@@ -89,7 +90,45 @@ export function FixedToolbarButtons() {
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>Text</DropdownMenuLabel>
 
-                  <DropdownMenuItem className="w-fit">
+                  <div className="w-fit grid grid-cols-3">
+                    <MarkToolbarButton
+                      className="w-full"
+                      nodeType={KEYS.bold}
+                      tooltip="Bold (⌘+B)"
+                    >
+                      <BoldIcon />
+                    </MarkToolbarButton>
+
+                    <MarkToolbarButton
+                      nodeType={KEYS.italic}
+                      tooltip="Italic (⌘+I)"
+                    >
+                      <ItalicIcon />
+                    </MarkToolbarButton>
+
+                    <MarkToolbarButton
+                      nodeType={KEYS.underline}
+                      tooltip="Underline (⌘+U)"
+                    >
+                      <UnderlineIcon />
+                    </MarkToolbarButton>
+
+                    <MarkToolbarButton
+                      nodeType={KEYS.strikethrough}
+                      tooltip="Strikethrough (⌘+⇧+M)"
+                    >
+                      <StrikethroughIcon />
+                    </MarkToolbarButton>
+
+                    <FontColorToolbarButton
+                      nodeType={KEYS.color}
+                      tooltip="Text color"
+                    >
+                      <BaselineIcon />
+                    </FontColorToolbarButton>
+                  </div>
+
+                  {/* <DropdownMenuItem className="w-fit">
                     <MarkToolbarButton
                       className="w-full"
                       nodeType={KEYS.bold}
@@ -133,7 +172,7 @@ export function FixedToolbarButtons() {
                     >
                       <BaselineIcon />
                     </FontColorToolbarButton>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                 </DropdownMenuGroup>
 
                 <DropdownMenuGroup>
@@ -180,25 +219,40 @@ export function FixedToolbarButtons() {
           </ToolbarGroup>
 
           <ToolbarGroup>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {/* <TextInitial /> */}
+                  <Images size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-fit">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Align</DropdownMenuLabel>
+
+                  <div className="w-fit grid grid-cols-3">
+                    {" "}
+                    <MediaToolbarButton nodeType={KEYS.img} />
+                    <MediaToolbarButton nodeType={KEYS.video} />
+                    <MediaToolbarButton nodeType={KEYS.audio} />
+                    <MediaToolbarButton nodeType={KEYS.file} />
+                  </div>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </ToolbarGroup>
+
+          <ToolbarGroup>
             {/* <LinkToolbarButton /> */}
             {/* <TableToolbarButton /> */}
             <InsertToolbarButton />
             {/* <EmojiToolbarButton /> */}
           </ToolbarGroup>
-
-          <ToolbarGroup>
-            {/*  <MediaToolbarButton nodeType={KEYS.img} />
-            <MediaToolbarButton nodeType={KEYS.video} />
-           <MediaToolbarButton nodeType={KEYS.audio} />
-            <MediaToolbarButton nodeType={KEYS.file} /> */}
-          </ToolbarGroup>
         </>
       )}
 
       <ToolbarGroup>
-        {/* <MarkToolbarButton nodeType={KEYS.highlight} tooltip="Highlight">
-          <HighlighterIcon />
-        </MarkToolbarButton> */}
+        {/* */}
         {/* <CommentToolbarButton /> */}
       </ToolbarGroup>
 

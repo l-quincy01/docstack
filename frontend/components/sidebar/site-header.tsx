@@ -13,7 +13,7 @@ export function SiteHeader() {
   const pathname = usePathname();
   const params = useParams<{ topicId?: string; documentId?: string }>();
   const [maximise, setMaximise] = useState(false);
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, setOpen } = useSidebar();
 
   const topicId = params?.topicId;
   const documentId = params?.documentId;
@@ -58,7 +58,7 @@ export function SiteHeader() {
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => {
-                  toggleSidebar();
+                  setOpen(false);
                   setMaximise((v) => !v);
                 }}
               >
@@ -75,78 +75,3 @@ export function SiteHeader() {
     </header>
   );
 }
-
-/*
- const [activeTab, setActiveTab] = useState("1");
-
-  const addTab = () => {
-    if (tabs.length >= 5) return;
-
-    const newId = (tabs.length + 1).toString();
-
-    const newTab = {
-      id: newId,
-      label: `Learn Tab ${newId}`,
-    };
-
-    setTabs([...tabs, newTab]);
-    setActiveTab(newId);
-  };
-
-  const removeTab = (id: string) => {
-    if (tabs.length <= 1) return;
-
-    const updated = tabs.filter((tab) => tab.id !== id);
-    setTabs(updated);
-
-    if (activeTab === id) {
-      setActiveTab(updated[0].id);
-    }
-  };
-
-
-
-  <Tabs value={activeTab} onValueChange={setActiveTab}>
-      <div className="flex items-center">
-        <TabsList className="m-0 p-0" variant="line">
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              className="flex items-center gap-2"
-            >
-              {tab.label}
-
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeTab(tab.id);
-                }}
-                className="rounded-full p-1 hover:bg-muted cursor-pointer"
-              >
-                <X size={14} />
-              </div>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="p-0"
-          onClick={addTab}
-          disabled={tabs.length >= 5}
-        >
-          <Plus size={16} />
-        </Button>
-      </div>
-
-      {tabs.map((tab) => (
-        <TabsContent key={tab.id} value={tab.id}>
-     
-        </TabsContent>
-      ))}
-    </Tabs>
-
-
-*/

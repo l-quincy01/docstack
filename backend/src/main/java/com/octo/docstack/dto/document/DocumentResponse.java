@@ -9,7 +9,7 @@ public class DocumentResponse {
     private String topicId;
     private String topicTitle;
     private String title;
-    private String content;
+    private Object content;
     private DocItemStatus status;
     private Instant createdAt;
     private Instant updatedAt;
@@ -21,7 +21,7 @@ public class DocumentResponse {
             String topicId,
             String topicTitle,
             String title,
-            String content,
+            Object content,
             DocItemStatus status,
             Instant createdAt,
             Instant updatedAt
@@ -40,7 +40,7 @@ public class DocumentResponse {
     public String getTopicId() { return topicId; }
     public String getTopicTitle() { return topicTitle; }
     public String getTitle() { return title; }
-    public String getContent() { return content; }
+    public Object getContent() { return content; }
     public DocItemStatus getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

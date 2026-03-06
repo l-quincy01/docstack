@@ -5,6 +5,7 @@ import * as React from "react";
 import {
   BoldIcon,
   Code2Icon,
+  HighlighterIcon,
   ItalicIcon,
   StrikethroughIcon,
   UnderlineIcon,
@@ -22,6 +23,12 @@ import { MoreToolbarButton } from "./more-toolbar-button";
 import { SuggestionToolbarButton } from "./suggestion-toolbar-button";
 import { ToolbarGroup } from "./toolbar";
 import { TurnIntoToolbarButton } from "./turn-into-toolbar-button";
+import { AlignToolbarButton } from "./align-toolbar-button";
+import {
+  BulletedListToolbarButton,
+  NumberedListToolbarButton,
+  TodoListToolbarButton,
+} from "./list-toolbar-button";
 
 export function FloatingToolbarButtons() {
   const readOnly = useEditorReadOnly();
@@ -66,7 +73,16 @@ export function FloatingToolbarButtons() {
               <Code2Icon />
             </MarkToolbarButton>
 
-            <InlineEquationToolbarButton />
+            {/* ---- */}
+            <AlignToolbarButton />
+            <NumberedListToolbarButton />
+            <BulletedListToolbarButton />
+            <TodoListToolbarButton />
+            {/* ---- */}
+
+            <MarkToolbarButton nodeType={KEYS.highlight} tooltip="Highlight">
+              <HighlighterIcon />
+            </MarkToolbarButton>
 
             <LinkToolbarButton />
           </ToolbarGroup>
@@ -74,7 +90,7 @@ export function FloatingToolbarButtons() {
       )}
 
       <ToolbarGroup>
-        <CommentToolbarButton />
+        {/* <CommentToolbarButton /> */}
         {/* <SuggestionToolbarButton /> */}
 
         {!readOnly && <MoreToolbarButton />}

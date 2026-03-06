@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { HeroHeader } from "@/components/navigation/navbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "sonner";
 
 const notoSans = Noto_Sans({ variable: "--font-sans" });
 
@@ -45,6 +46,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <TooltipProvider>{children}</TooltipProvider>
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

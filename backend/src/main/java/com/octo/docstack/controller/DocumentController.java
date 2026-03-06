@@ -124,6 +124,24 @@ public class DocumentController {
         return ResponseEntity.ok(new DocumentActionResponse(documentId, "Document recovered"));
     }
 
+    @PatchMapping("/{id}/content")
+    public DocumentContentResponse updateContent(
+            @PathVariable String id,
+            @RequestBody UpdateDocumentContentRequest req,
+            Authentication authentication
+    ) {
+
+        String userId = authentication.getName();
+
+        return documentService.updateContent(
+                id,
+                userId,
+                req
+        );
+    }
+
+
+
     @GetMapping("/trash")
     public ResponseEntity<List<DocumentCardResponse>> listTrash(Authentication authentication) {
         String userId = currentUserService.getCurrentUserId(authentication);

@@ -159,19 +159,7 @@ export const ToolbarButton = withTooltip(function ToolbarButton({
       </ToolbarToggleItem>
     </ToolbarToggleGroup>
   ) : (
-    <ToolbarPrimitive.Button
-      className={cn(
-        toolbarButtonVariants({
-          size,
-          variant,
-        }),
-        isDropdown && "pr-1",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </ToolbarPrimitive.Button>
+    <div>{children}</div>
   );
 });
 

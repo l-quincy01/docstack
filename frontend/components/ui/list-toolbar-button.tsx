@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 
-import { ListStyleType, someList, toggleList } from '@platejs/list';
+import { ListStyleType, someList, toggleList } from "@platejs/list";
 import {
   useIndentTodoToolBarButton,
   useIndentTodoToolBarButtonState,
-} from '@platejs/list/react';
-import { List, ListOrdered, ListTodoIcon } from 'lucide-react';
-import { useEditorRef, useEditorSelector } from 'platejs/react';
+} from "@platejs/list/react";
+import { List, ListOrdered, ListTodoIcon } from "lucide-react";
+import { useEditorRef, useEditorSelector } from "platejs/react";
 
 import {
   DropdownMenu,
@@ -16,14 +16,14 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 import {
   ToolbarButton,
   ToolbarSplitButton,
   ToolbarSplitButtonPrimary,
   ToolbarSplitButtonSecondary,
-} from './toolbar';
+} from "./toolbar";
 
 export function BulletedListToolbarButton() {
   const editor = useEditorRef();
@@ -48,7 +48,7 @@ export function BulletedListToolbarButton() {
             listStyleType: ListStyleType.Disc,
           });
         }}
-        data-state={pressed ? 'on' : 'off'}
+        data-state={pressed ? "on" : "off"}
       >
         <List className="size-4" />
       </ToolbarSplitButtonPrimary>
@@ -61,11 +61,14 @@ export function BulletedListToolbarButton() {
         <DropdownMenuContent align="start" alignOffset={-32}>
           <DropdownMenuGroup>
             <DropdownMenuItem
-              onClick={() =>
+              onMouseDown={(e) => {
+                e.preventDefault();
                 toggleList(editor, {
                   listStyleType: ListStyleType.Disc,
-                })
-              }
+                });
+                editor.tf.focus();
+                setOpen(false);
+              }}
             >
               <div className="flex items-center gap-2">
                 <div className="size-2 rounded-full border border-current bg-current" />
@@ -73,11 +76,14 @@ export function BulletedListToolbarButton() {
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
+              onMouseDown={(e) => {
+                e.preventDefault();
                 toggleList(editor, {
                   listStyleType: ListStyleType.Circle,
-                })
-              }
+                });
+                editor.tf.focus();
+                setOpen(false);
+              }}
             >
               <div className="flex items-center gap-2">
                 <div className="size-2 rounded-full border border-current" />
@@ -85,11 +91,14 @@ export function BulletedListToolbarButton() {
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
+              onMouseDown={(e) => {
+                e.preventDefault();
                 toggleList(editor, {
                   listStyleType: ListStyleType.Square,
-                })
-              }
+                });
+                editor.tf.focus();
+                setOpen(false);
+              }}
             >
               <div className="flex items-center gap-2">
                 <div className="size-2 border border-current bg-current" />
@@ -128,7 +137,7 @@ export function NumberedListToolbarButton() {
             listStyleType: ListStyleType.Decimal,
           })
         }
-        data-state={pressed ? 'on' : 'off'}
+        data-state={pressed ? "on" : "off"}
       >
         <ListOrdered className="size-4" />
       </ToolbarSplitButtonPrimary>
@@ -141,47 +150,62 @@ export function NumberedListToolbarButton() {
         <DropdownMenuContent align="start" alignOffset={-32}>
           <DropdownMenuGroup>
             <DropdownMenuItem
-              onSelect={() =>
+              onMouseDown={(e) => {
+                e.preventDefault();
                 toggleList(editor, {
                   listStyleType: ListStyleType.Decimal,
-                })
-              }
+                });
+                editor.tf.focus();
+                setOpen(false);
+              }}
             >
               Decimal (1, 2, 3)
             </DropdownMenuItem>
             <DropdownMenuItem
-              onSelect={() =>
+              onMouseDown={(e) => {
+                e.preventDefault();
                 toggleList(editor, {
                   listStyleType: ListStyleType.LowerAlpha,
-                })
-              }
+                });
+                editor.tf.focus();
+                setOpen(false);
+              }}
             >
               Lower Alpha (a, b, c)
             </DropdownMenuItem>
             <DropdownMenuItem
-              onSelect={() =>
+              onMouseDown={(e) => {
+                e.preventDefault();
                 toggleList(editor, {
                   listStyleType: ListStyleType.UpperAlpha,
-                })
-              }
+                });
+                editor.tf.focus();
+                setOpen(false);
+              }}
             >
               Upper Alpha (A, B, C)
             </DropdownMenuItem>
             <DropdownMenuItem
-              onSelect={() =>
+              onMouseDown={(e) => {
+                e.preventDefault();
                 toggleList(editor, {
                   listStyleType: ListStyleType.LowerRoman,
-                })
-              }
+                });
+                editor.tf.focus();
+                setOpen(false);
+              }}
             >
               Lower Roman (i, ii, iii)
             </DropdownMenuItem>
             <DropdownMenuItem
-              onSelect={() =>
+              onMouseDown={(e) => {
+                e.preventDefault();
                 toggleList(editor, {
                   listStyleType: ListStyleType.UpperRoman,
-                })
-              }
+                });
+                editor.tf.focus();
+                setOpen(false);
+              }}
             >
               Upper Roman (I, II, III)
             </DropdownMenuItem>
@@ -195,7 +219,7 @@ export function NumberedListToolbarButton() {
 export function TodoListToolbarButton(
   props: React.ComponentProps<typeof ToolbarButton>
 ) {
-  const state = useIndentTodoToolBarButtonState({ nodeType: 'todo' });
+  const state = useIndentTodoToolBarButtonState({ nodeType: "todo" });
   const { props: buttonProps } = useIndentTodoToolBarButton(state);
 
   return (

@@ -81,3 +81,29 @@ export async function permanentDeleteDocument(
 ) {
   return apiFetch(`/api/documents/${documentId}`, { method: "DELETE" }, token);
 }
+
+export async function updateDocumentContent(
+  documentId: string,
+  content: unknown,
+  token: string
+) {
+  return apiFetch(
+    `/api/documents/${documentId}/content`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ content }),
+    },
+    token
+  );
+}
+
+export async function getDocumentById(
+  documentId: string,
+  token: string
+): Promise<DocumentItem> {
+  return apiFetch<DocumentItem>(
+    `/api/documents/${documentId}`,
+    { method: "GET" },
+    token
+  );
+}
