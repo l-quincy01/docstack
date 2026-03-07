@@ -13,17 +13,13 @@ import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import { toast } from "sonner";
 import EditDocument from "@/components/documents/dialogs/edit-document";
 import { useTrashDocumentMutation } from "@/hooks/document/useDocument";
+import { DocumentCardItem } from "@/lib/types/document";
 
-interface CardData {
-  id: string;
-  topicId: string;
-  topicTitle: string;
-  title: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export default function DocumentCard({ cardData }: { cardData: CardData }) {
+export default function DocumentCard({
+  cardData,
+}: {
+  cardData: DocumentCardItem;
+}) {
   const [renameOpen, setRenameOpen] = useState(false);
 
   const trashMutation = useTrashDocumentMutation(cardData.topicId);
@@ -48,7 +44,10 @@ export default function DocumentCard({ cardData }: { cardData: CardData }) {
           className="w-full aspect-16/10 overflow-hidden rounded-t-xl"
         >
           <img
-            src="https://youlearn-content-uploads.s3.amazonaws.com/thumbnails/pdf/x6R0LzzLtedX069.png"
+            src={
+              cardData.thumbnailUrl ??
+              `https://youlearn-content-uploads.s3.amazonaws.com/thumbnails/pdf/x6R0LzzLtedX069.png`
+            }
             alt="preview"
             className="w-full h-full object-cover"
           />

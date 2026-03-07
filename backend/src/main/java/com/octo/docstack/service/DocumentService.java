@@ -167,4 +167,22 @@ public class DocumentService {
                 doc.getUpdatedAt()
         );
     }
+
+
+   /* public DocItem updateThumbnail(String userId, String documentId, String thumbnailUrl) {
+        DocItem doc = documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
+
+        doc.setThumbnailUrl(thumbnailUrl);
+        return documentRepository.save(doc);
+    }*/
+
+    public DocItem updateThumbnailUrl(String userId, String documentId, String thumbnailUrl) {
+        DocItem doc = documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
+
+        doc.setThumbnailUrl(thumbnailUrl);
+        return documentRepository.save(doc);
+    }
+
 }

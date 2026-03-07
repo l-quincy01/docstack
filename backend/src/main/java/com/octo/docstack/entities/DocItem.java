@@ -24,11 +24,16 @@ public class DocItem {
     private String title;
     private DocItemStatus status  = DocItemStatus.ACTIVE;
     private Object content;
+
     @CreatedDate
     private Instant createdAt;
 
     @LastModifiedDate
     private Instant updatedAt;
+    private String thumbnailUrl;
+
+
+
 
     public String getId() { return id; }
     public String getUserId() { return userId; }
@@ -45,6 +50,7 @@ public class DocItem {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
+    public String getThumbnailUrl() { return thumbnailUrl; }
 
     public void setId(String id) { this.id = id; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -55,4 +61,5 @@ public class DocItem {
     public void setContent(Object content) { this.content = content; }
     public void  setCreatedAt(Instant createdAt){this.createdAt = createdAt;}
     public void  setUpdatedAt(Instant updatedAt){this.updatedAt = updatedAt;}
+    public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
 }

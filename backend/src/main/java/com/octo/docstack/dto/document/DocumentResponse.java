@@ -13,6 +13,7 @@ public class DocumentResponse {
     private DocItemStatus status;
     private Instant createdAt;
     private Instant updatedAt;
+    private String thumbnailUrl ;
 
     public DocumentResponse() {}
 
@@ -24,7 +25,9 @@ public class DocumentResponse {
             Object content,
             DocItemStatus status,
             Instant createdAt,
-            Instant updatedAt
+            Instant updatedAt,
+            String thumbnailUrl
+
     ) {
         this.id = id;
         this.topicId = topicId;
@@ -34,6 +37,8 @@ public class DocumentResponse {
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.thumbnailUrl = thumbnailUrl ;
+
     }
 
     public String getId() { return id; }
@@ -44,6 +49,7 @@ public class DocumentResponse {
     public DocItemStatus getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    public String getThumbnailUrl() { return thumbnailUrl; }
 
     public void setId(String id) { this.id = id; }
     public void setTopicId(String topicId) { this.topicId = topicId; }
@@ -53,4 +59,5 @@ public class DocumentResponse {
     public void setStatus(DocItemStatus status) { this.status = status; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+    public void setThumbnailUrl() { this.thumbnailUrl = thumbnailUrl; }
 }

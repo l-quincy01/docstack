@@ -8,6 +8,7 @@ import com.octo.docstack.entities.DocItem;
 import com.octo.docstack.entities.DocItemStatus;
 import com.octo.docstack.mapper.DocumentMapper;
 import com.octo.docstack.service.DocumentService;
+import com.octo.docstack.service.ThumbnailService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +24,22 @@ public class DocumentController {
     private final DocumentService documentService;
     private final DocumentMapper documentMapper;
     private final CurrentUserService currentUserService;
+    private final ThumbnailService thumbnailService ;
 
     public DocumentController(
             DocumentService documentService,
             DocumentMapper documentMapper,
-            CurrentUserService currentUserService
+            CurrentUserService currentUserService,
+            ThumbnailService thumbnailService
     ) {
         this.documentService = documentService;
         this.documentMapper = documentMapper;
         this.currentUserService = currentUserService;
+        this.thumbnailService = thumbnailService ;
     }
 
+
+    //CREATES
     @PostMapping
     public ResponseEntity<DocumentResponse> create(
             @Valid @RequestBody CreateDocumentRequest request,
@@ -44,6 +50,7 @@ public class DocumentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(documentMapper.toDocumentResponse(created));
     }
 
+    //READS
     @GetMapping
     public ResponseEntity<List<DocumentCardResponse>> listDocuments(
             @RequestParam(required = false) DocItemStatus status,
@@ -63,9 +70,6 @@ public class DocumentController {
         return ResponseEntity.ok(res) ;
 
     }
-
-
-
 
 
     @GetMapping("/topic/{topicId}")
@@ -93,6 +97,18 @@ public class DocumentController {
         return ResponseEntity.ok(documentMapper.toDocumentResponse(doc));
     }
 
+    @GetMapping("/trash")
+    public ResponseEntity<List<DocumentCardResponse>> listTrash(Authentication authentication) {
+        String userId = currentUserService.getCurrentUserId(authentication);
+        List<DocumentCardResponse> res = documentService.listTrash(userId)
+                .stream()
+                .map(documentMapper::toCardResponse)
+                .toList();
+
+        return ResponseEntity.ok(res);
+    }
+
+    //UPDATES
     @PatchMapping("/{documentId}")
     public ResponseEntity<DocumentResponse> update(
             @PathVariable String documentId,
@@ -140,19 +156,32 @@ public class DocumentController {
         );
     }
 
-
-
-    @GetMapping("/trash")
-    public ResponseEntity<List<DocumentCardResponse>> listTrash(Authentication authentication) {
+    @PostMapping("/{documentId}/thumbnail/presign")
+    public ResponseEntity<ThumbnailPresignResponse> presignThumbnailUpload(
+           Authentication authentication,
+            @PathVariable String documentId
+    ) {
         String userId = currentUserService.getCurrentUserId(authentication);
-        List<DocumentCardResponse> res = documentService.listTrash(userId)
-                .stream()
-                .map(documentMapper::toCardResponse)
-                .toList();
+        ThumbnailPresignResponse response =
+                thumbnailService.createThumbnailUploadUrl(userId, documentId);
 
-        return ResponseEntity.ok(res);
+        return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/{documentId}/thumbnail")
+    public ResponseEntity<DocumentResponse> updateThumbnail(
+           Authentication authentication,
+            @PathVariable String documentId,
+            @RequestBody UpdateThumbnailRequest req
+    ) {
+        String userId = currentUserService.getCurrentUserId(authentication);
+        DocItem updated = documentService.updateThumbnailUrl(userId, documentId, req.getThumbnailUrl());
+        return ResponseEntity.ok(documentMapper.toDocumentResponse(updated));
+    }
+
+
+
+    //DELETES
     @DeleteMapping("/{documentId}")
     public ResponseEntity<DocumentActionResponse> permanentDelete(
             @PathVariable String documentId,

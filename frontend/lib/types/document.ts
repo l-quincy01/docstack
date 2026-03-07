@@ -6,6 +6,7 @@ export interface DocumentItem {
   topicId: string;
   title: string;
   content?: any;
+  thumbnailUrl?: string | null;
   status?: DocItemStatus;
   createdAt?: string;
   updatedAt?: string;
@@ -35,4 +36,5 @@ export interface DocumentCardItem {
   title: string;
   createdAt: string;
   updatedAt: string;
+  thumbnailUrl: string;
 }

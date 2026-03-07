@@ -27,7 +27,9 @@ public class DocumentMapper {
                 doc.getContent(),
                 doc.getStatus(),
                 doc.getCreatedAt(),
-                doc.getUpdatedAt()
+                doc.getUpdatedAt(),
+                doc.getThumbnailUrl()
+
         );
     }
 
@@ -38,7 +40,8 @@ public class DocumentMapper {
                 doc.getTopicTitle(),
                 doc.getTitle(),
                 formatCardDate(doc.getCreatedAt()),
-                formatCardDate(doc.getUpdatedAt())
+                formatCardDate(doc.getUpdatedAt()),
+                doc.getThumbnailUrl()
         );
     }
 
