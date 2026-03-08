@@ -34,6 +34,7 @@ export interface DocumentCardItem {
   topicId: string;
   topicTitle: string;
   title: string;
+  content?: any;
   createdAt: string;
   updatedAt: string;
   thumbnailUrl: string;

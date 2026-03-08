@@ -39,6 +39,7 @@ public class DocumentMapper {
                 doc.getTopicId(),
                 doc.getTopicTitle(),
                 doc.getTitle(),
+                doc.getContent(),
                 formatCardDate(doc.getCreatedAt()),
                 formatCardDate(doc.getUpdatedAt()),
                 doc.getThumbnailUrl()
