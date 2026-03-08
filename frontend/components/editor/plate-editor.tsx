@@ -117,6 +117,7 @@ export function PlateEditor({ documentId, initialContent }: Props) {
   const editor = usePlateEditor(
     {
       plugins: EditorKit,
+
       value: EMPTY_VALUE,
       autoSelect: "end",
     },
