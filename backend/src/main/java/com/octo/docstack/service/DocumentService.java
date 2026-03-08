@@ -1,6 +1,8 @@
 package com.octo.docstack.service;
 
 import com.octo.docstack.dto.document.CreateDocumentRequest;
+import com.octo.docstack.dto.document.DocumentContentResponse;
+import com.octo.docstack.dto.document.UpdateDocumentContentRequest;
 import com.octo.docstack.dto.document.UpdateDocumentRequest;
 import com.octo.docstack.entities.DocItem;
 import com.octo.docstack.entities.DocItemStatus;
@@ -12,6 +14,7 @@ import com.octo.docstack.repository.TopicRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -139,4 +142,47 @@ public class DocumentService {
         }
         return cleaned;
     }
+
+
+    public DocumentContentResponse updateContent(
+            String documentId,
+            String userId,
+            UpdateDocumentContentRequest req
+    ) {
+
+        DocItem doc = documentRepository.findById(documentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
+
+        if (!doc.getUserId().equals(userId)) {
+            throw new ResourceNotFoundException("Document not found");
+        }
+
+        doc.setContent(req.getContent());
+        doc.setUpdatedAt(Instant.now());
+
+        documentRepository.save(doc);
+
+        return new DocumentContentResponse(
+                doc.getId(),
+                doc.getUpdatedAt()
+        );
+    }
+
+
+   /* public DocItem updateThumbnail(String userId, String documentId, String thumbnailUrl) {
+        DocItem doc = documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
+
+        doc.setThumbnailUrl(thumbnailUrl);
+        return documentRepository.save(doc);
+    }*/
+
+    public DocItem updateThumbnailUrl(String userId, String documentId, String thumbnailUrl) {
+        DocItem doc = documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
+
+        doc.setThumbnailUrl(thumbnailUrl);
+        return documentRepository.save(doc);
+    }
+
 }

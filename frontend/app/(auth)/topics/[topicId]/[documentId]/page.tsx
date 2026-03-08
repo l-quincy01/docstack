@@ -1,30 +1,49 @@
 "use client";
-import { PlateEditor } from "@/components/editor/plate-editor";
-import { Input } from "@/components/ui/input";
-import { ChevronLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-import React from "react";
+import { PlateEditor } from "@/components/editor/plate-editor";
+import { useParams } from "next/navigation";
+import { useDocumentQuery } from "@/hooks/document/useDocument";
 import { Toaster } from "sonner";
+import { useMemo } from "react";
 
 export default function Page() {
-  const router = useRouter();
+  const params = useParams<{ documentId: string }>();
+  const documentId = params.documentId;
+
+  const { data: document, isLoading, isError } = useDocumentQuery(documentId);
+
+  const defaultValue = useMemo(
+    () => [
+      {
+        type: "p",
+        children: [{ text: "" }],
+      },
+    ],
+    []
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading document...
+      </div>
+    );
+  }
+
+  if (isError || !document) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Failed to load document
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full flex flex-col justify-center  scrollbar-hide">
-      <div className="w-full flex flex-row justify-start items-center gap-2 ">
-        <div
-          onClick={() => {
-            router.back();
-          }}
-          className="inline-flex items-center justify-center rounded-xl hover:bg-muted p-2 text-sm cursor-pointer "
-        >
-          <ChevronLeft size={20} strokeWidth={1.5} /> Back
-        </div>
-      </div>
-
-      <PlateEditor />
-      <Toaster />
+    <div className="w-full flex flex-col justify-center scrollbar-hide">
+      <PlateEditor
+        documentId={documentId}
+        initialContent={document.content ?? defaultValue}
+      />
     </div>
   );
 }

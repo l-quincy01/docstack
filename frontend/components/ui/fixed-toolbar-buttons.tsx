@@ -6,11 +6,14 @@ import {
   ArrowUpToLineIcon,
   BaselineIcon,
   BoldIcon,
+  CaseSensitive,
   Code2Icon,
   HighlighterIcon,
+  Images,
   ItalicIcon,
   PaintBucketIcon,
   StrikethroughIcon,
+  TextInitial,
   UnderlineIcon,
   WandSparklesIcon,
 } from "lucide-react";
@@ -47,6 +50,17 @@ import { ToggleToolbarButton } from "./toggle-toolbar-button";
 import { ToolbarGroup } from "./toolbar";
 import { TurnIntoToolbarButton } from "./turn-into-toolbar-button";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
 
@@ -60,78 +74,185 @@ export function FixedToolbarButtons() {
           </ToolbarGroup>
 
           <ToolbarGroup>
-            <InsertToolbarButton />
             <TurnIntoToolbarButton />
             <FontSizeToolbarButton />
           </ToolbarGroup>
 
           <ToolbarGroup>
-            <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold (⌘+B)">
-              <BoldIcon />
-            </MarkToolbarButton>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="w-fit">
+                <Button variant="outline">
+                  <CaseSensitive />
+                </Button>
+              </DropdownMenuTrigger>
 
-            <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic (⌘+I)">
-              <ItalicIcon />
-            </MarkToolbarButton>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Text</DropdownMenuLabel>
 
-            <MarkToolbarButton
-              nodeType={KEYS.underline}
-              tooltip="Underline (⌘+U)"
-            >
-              <UnderlineIcon />
-            </MarkToolbarButton>
+                  <div className="w-fit grid grid-cols-3">
+                    <MarkToolbarButton
+                      className="w-full"
+                      nodeType={KEYS.bold}
+                      tooltip="Bold (⌘+B)"
+                    >
+                      <BoldIcon />
+                    </MarkToolbarButton>
 
-            <MarkToolbarButton
-              nodeType={KEYS.strikethrough}
-              tooltip="Strikethrough (⌘+⇧+M)"
-            >
-              <StrikethroughIcon />
-            </MarkToolbarButton>
+                    <MarkToolbarButton
+                      nodeType={KEYS.italic}
+                      tooltip="Italic (⌘+I)"
+                    >
+                      <ItalicIcon />
+                    </MarkToolbarButton>
+
+                    <MarkToolbarButton
+                      nodeType={KEYS.underline}
+                      tooltip="Underline (⌘+U)"
+                    >
+                      <UnderlineIcon />
+                    </MarkToolbarButton>
+
+                    <MarkToolbarButton
+                      nodeType={KEYS.strikethrough}
+                      tooltip="Strikethrough (⌘+⇧+M)"
+                    >
+                      <StrikethroughIcon />
+                    </MarkToolbarButton>
+
+                    <FontColorToolbarButton
+                      nodeType={KEYS.color}
+                      tooltip="Text color"
+                    >
+                      <BaselineIcon />
+                    </FontColorToolbarButton>
+                  </div>
+
+                  {/* <DropdownMenuItem className="w-fit">
+                    <MarkToolbarButton
+                      className="w-full"
+                      nodeType={KEYS.bold}
+                      tooltip="Bold (⌘+B)"
+                    >
+                      <BoldIcon />
+                    </MarkToolbarButton>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem>
+                    <MarkToolbarButton
+                      nodeType={KEYS.italic}
+                      tooltip="Italic (⌘+I)"
+                    >
+                      <ItalicIcon />
+                    </MarkToolbarButton>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem>
+                    <MarkToolbarButton
+                      nodeType={KEYS.underline}
+                      tooltip="Underline (⌘+U)"
+                    >
+                      <UnderlineIcon />
+                    </MarkToolbarButton>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem>
+                    <MarkToolbarButton
+                      nodeType={KEYS.strikethrough}
+                      tooltip="Strikethrough (⌘+⇧+M)"
+                    >
+                      <StrikethroughIcon />
+                    </MarkToolbarButton>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem>
+                    <FontColorToolbarButton
+                      nodeType={KEYS.color}
+                      tooltip="Text color"
+                    >
+                      <BaselineIcon />
+                    </FontColorToolbarButton>
+                  </DropdownMenuItem> */}
+                </DropdownMenuGroup>
+
+                <DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* <MarkToolbarButton nodeType={KEYS.code} tooltip="Code (⌘+E)">
               <Code2Icon />
             </MarkToolbarButton> */}
 
-            <FontColorToolbarButton nodeType={KEYS.color} tooltip="Text color">
-              <BaselineIcon />
-            </FontColorToolbarButton>
-
-            <FontColorToolbarButton
+            {/* <FontColorToolbarButton
               nodeType={KEYS.backgroundColor}
               tooltip="Background color"
             >
               <PaintBucketIcon />
-            </FontColorToolbarButton>
+            </FontColorToolbarButton> */}
           </ToolbarGroup>
 
           <ToolbarGroup>
-            <AlignToolbarButton />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <TextInitial />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-fit">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Align</DropdownMenuLabel>
 
-            <NumberedListToolbarButton />
-            <BulletedListToolbarButton />
-            <TodoListToolbarButton />
-            <ToggleToolbarButton />
+                  <div className="w-fit grid grid-cols-3">
+                    {" "}
+                    <AlignToolbarButton />
+                    <NumberedListToolbarButton />
+                    <BulletedListToolbarButton />
+                    <TodoListToolbarButton />
+                    <ToggleToolbarButton />
+                    <TableToolbarButton />
+                  </div>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </ToolbarGroup>
+
+          <ToolbarGroup>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {/* <TextInitial /> */}
+                  <Images size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-fit">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Align</DropdownMenuLabel>
+
+                  <div className="w-fit grid grid-cols-3">
+                    {" "}
+                    <MediaToolbarButton nodeType={KEYS.img} />
+                    <MediaToolbarButton nodeType={KEYS.video} />
+                    <MediaToolbarButton nodeType={KEYS.audio} />
+                    <MediaToolbarButton nodeType={KEYS.file} />
+                  </div>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </ToolbarGroup>
 
           <ToolbarGroup>
             {/* <LinkToolbarButton /> */}
-            <TableToolbarButton />
+            {/* <TableToolbarButton /> */}
+            <InsertToolbarButton />
             {/* <EmojiToolbarButton /> */}
-          </ToolbarGroup>
-
-          <ToolbarGroup>
-            {/*  <MediaToolbarButton nodeType={KEYS.img} />
-            <MediaToolbarButton nodeType={KEYS.video} />
-           <MediaToolbarButton nodeType={KEYS.audio} />
-            <MediaToolbarButton nodeType={KEYS.file} /> */}
           </ToolbarGroup>
         </>
       )}
 
       <ToolbarGroup>
-        <MarkToolbarButton nodeType={KEYS.highlight} tooltip="Highlight">
-          <HighlighterIcon />
-        </MarkToolbarButton>
+        {/* */}
         {/* <CommentToolbarButton /> */}
       </ToolbarGroup>
 

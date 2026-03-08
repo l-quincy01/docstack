@@ -133,6 +133,24 @@
   }
 }
 
+
+/*---------------*/
+.thumbnail-page {
+  width: 794px;
+  height: 1123px;
+  background: white;
+  overflow: hidden;
+  padding: 72px 64px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.thumbnail-page * {
+  animation: none !important;
+  caret-color: transparent !important;
+}
+
+
 /*
 
 @import "tailwindcss";
