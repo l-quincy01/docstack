@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import EditDocument from "@/components/documents/dialogs/edit-document";
 import { useTrashDocumentMutation } from "@/hooks/document/useDocument";
 import { DocumentCardItem } from "@/lib/types/document";
+import { StaticPlatePreview } from "../editor/StaticPlatePreview";
 
 export default function DocumentCard({
   cardData,
@@ -41,16 +42,9 @@ export default function DocumentCard({
       <div className="flex flex-col min-w-32 max-w-56 rounded-xl shadow-sm hover:shadow-md border transition-all cursor-pointer">
         <Link
           href={`/topics/${cardData.topicId}/${cardData.id}`}
-          className="w-full aspect-16/10 overflow-hidden rounded-t-xl"
+          className="w-full h-full aspect-16/10 overflow-hidden rounded-t-xl"
         >
-          <img
-            src={
-              cardData.thumbnailUrl ??
-              `https://youlearn-content-uploads.s3.amazonaws.com/thumbnails/pdf/x6R0LzzLtedX069.png`
-            }
-            alt="preview"
-            className="w-full h-full object-cover"
-          />
+          <StaticPlatePreview value={cardData.content} />
         </Link>
 
         <div className="p-3 flex flex-row gap-1 items-end justify-between">
