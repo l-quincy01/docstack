@@ -1,8 +1,8 @@
 package com.octo.docstack.service;
 
-import com.octo.docstack.dto.ProfileCreateRequest;
-import com.octo.docstack.dto.ProfileResponse;
-import com.octo.docstack.dto.ProfileUpdateRequest;
+import com.octo.docstack.dto.profile.ProfileCreateRequest;
+import com.octo.docstack.dto.profile.ProfileResponse;
+import com.octo.docstack.dto.profile.ProfileUpdateRequest;
 
 public interface ProfileService {
 

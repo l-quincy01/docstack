@@ -1,51 +1,37 @@
+"use client";
+
 import AddDocument from "@/components/documents/dialogs/add-document";
 import DocumentCard from "@/components/documents/document-card";
-import NewDocumentCard from "@/components/documents/new-document-card";
+import { useDocumentsByTopicQuery } from "@/hooks/document/useDocument";
+import { useTopicsQuery } from "@/hooks/topics/useTopics";
+import { useParams } from "next/navigation";
 import React from "react";
 
-export default function page({ params }: { params: { topicId: string } }) {
-  const documents = [
-    {
-      documentId: "63I8jdhdmbx0282ieKB",
-      name: "Introduction to React",
-      date: "Jan 12, 2026",
-      topic: "Frontend Development",
-      thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee",
-    },
-    {
-      documentId: "63I8jdhdmbx0282ieKB",
-      name: "Advanced TypeScript Guide",
-      date: "Feb 02, 2026",
-      topic: "Programming",
-      thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c",
-    },
-    {
-      documentId: "63I8jdhdmbx0282ieKB",
-      name: "UI/UX Design Principles",
-      date: "Dec 18, 2025",
-      topic: "Design",
-      thumbnail: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e",
-    },
-    {
-      documentId: "63I8jdhdmbx0282ieKB",
-      name: "Database Optimization Techniques",
-      date: "Nov 30, 2025",
-      topic: "Backend Development",
-      thumbnail: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d",
-    },
-    {
-      documentId: "63I8jdhdmbx0282ieKB",
-      name: "Machine Learning Basics",
-      date: "Jan 05, 2026",
-      topic: "Artificial Intelligence",
-      thumbnail: "",
-    },
-  ];
+export default function Page() {
+  const params = useParams<{ topicId: string }>();
+
+  const topicId = params.topicId;
+
+  const {
+    data: topics = [],
+    isLoading: isTopicLoading,
+    isError: isTopicError,
+    error: topicError,
+  } = useTopicsQuery();
+
+  const {
+    data: documents = [],
+    isLoading,
+    isError,
+    error,
+  } = useDocumentsByTopicQuery(topicId);
+
+  const topicTitle = topics.find((topic) => topic.id === topicId);
 
   return (
-    <div className="flex flex-col gap-8 ">
-      <div className="flex flex-row w-full justify-center ">
-        <div className="text-2xl font-bold">IsiZulu Literature</div>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-row w-full justify-center">
+        <div className="text-2xl font-bold">{topicTitle?.title}</div>
       </div>
 
       <div className="text-muted-foreground font-bold">
@@ -54,10 +40,30 @@ export default function page({ params }: { params: { topicId: string } }) {
 
       <AddDocument />
 
+      {isLoading && (
+        <div className="text-sm text-muted-foreground">
+          Loading documents...
+        </div>
+      )}
+
+      {isError && (
+        <div className="text-sm text-destructive">
+          {(error as Error)?.message ?? "Failed to load documents"}
+        </div>
+      )}
+
       <div className="flex flex-row flex-wrap gap-4">
-        {documents.map((doc, index) => (
-          <DocumentCard key={index} cardData={doc} topicId={params.topicId} />
-        ))}
+        {documents.length < 1 ? (
+          <div className="flex flex-col justify-center items-center w-full h-full">
+            No documents yet.
+          </div>
+        ) : (
+          <div>
+            {documents.map((doc) => (
+              <DocumentCard key={doc.id} cardData={doc} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

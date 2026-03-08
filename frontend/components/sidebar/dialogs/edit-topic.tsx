@@ -1,13 +1,6 @@
-import React from "react";
-import {
-  CirclePlus,
-  CopyPlus,
-  FolderPlus,
-  Library,
-  LibraryBig,
-  Plus,
-  PlusCircle,
-} from "lucide-react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -16,45 +9,113 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { useRenameTopicMutation } from "@/hooks/topics/useTopics";
+import { toast } from "sonner";
 
-export default function EditTopic() {
+interface Props {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  topicId: string;
+  topicTitle: string;
+}
+
+export default function EditTopic({
+  open,
+  onOpenChange,
+  topicId,
+  topicTitle,
+}: Props) {
+  const [title, setTitle] = useState(topicTitle);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const renameTopicMutation = useRenameTopicMutation();
+
+  useEffect(() => {
+    if (open) {
+      setTitle(topicTitle);
+      setFormError(null);
+    }
+  }, [open, topicTitle]);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setFormError(null);
+
+    const cleanTitle = title.trim().replace(/\s+/g, " ");
+
+    if (!cleanTitle) {
+      setFormError("Topic name is required");
+      return;
+    }
+
+    if (cleanTitle === topicTitle.trim()) {
+      onOpenChange(false);
+      return;
+    }
+
+    try {
+      await renameTopicMutation.mutateAsync({
+        topicId,
+        title: cleanTitle,
+      });
+
+      toast.success("Topic renamed");
+      onOpenChange(false);
+    } catch (e: any) {
+      const message = e?.message ?? "Failed to rename topic";
+      setFormError(message);
+      toast.error(message);
+    }
+  }
+
   return (
-    <Dialog>
-      <form>
-        <DialogTrigger asChild></DialogTrigger>
-        <DialogContent className="sm:max-w-sm">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-sm">
+        <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Topic</DialogTitle>
-            <DialogDescription>
-              Create new topic where your documents will be stored.
-            </DialogDescription>
+            <DialogTitle>Rename Topic</DialogTitle>
+            <DialogDescription>Rename your topic.</DialogDescription>
           </DialogHeader>
-          <FieldGroup>
+
+          <FieldGroup className="mt-4">
             <Field>
-              <Label htmlFor="name-1">Topic Name</Label>
+              <Label htmlFor={`topic-name-${topicId}`}>Topic Name</Label>
               <Input
-                id="name-1"
+                id={`topic-name-${topicId}`}
                 name="name"
-                defaultValue=""
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder="Name of Topic"
+                disabled={renameTopicMutation.isPending}
+                autoFocus
               />
+              {formError ? (
+                <p className="text-sm text-destructive mt-1">{formError}</p>
+              ) : null}
             </Field>
           </FieldGroup>
-          <DialogFooter>
+
+          <DialogFooter className="mt-4">
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={renameTopicMutation.isPending}
+              >
+                Cancel
+              </Button>
             </DialogClose>
-            <Button type="submit">Create</Button>
+            <Button type="submit" disabled={renameTopicMutation.isPending}>
+              {renameTopicMutation.isPending ? "Renaming..." : "Rename"}
+            </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

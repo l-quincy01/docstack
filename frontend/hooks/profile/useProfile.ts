@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@clerk/nextjs";
-import { profileService } from "@/services/profileService";
-import type { Profile } from "@/services/profileService";
+import { profileService } from "@/services/profile/profileService";
+import type { Profile } from "@/services/profile/profileService";
 
 export function useMyProfile() {
   const { getToken } = useAuth();
@@ -41,6 +41,7 @@ export function useDeleteMyProfile() {
     },
     onSuccess: () => {
       qc.removeQueries({ queryKey: ["profile", "me"] });
+      qc.clear();
     },
   });
 }

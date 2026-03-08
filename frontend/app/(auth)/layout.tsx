@@ -14,9 +14,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           } as React.CSSProperties
         }
       >
-        <div className="flex min-h-scree  w-full">
+        <div className="flex  h-screen  w-full">
           <AppSidebar variant="floating" collapsible="icon" />
-          <main className="flex-1  p-4 mx-2 container w-full ">
+          <main className="flex-1 w-full mx-auto container p-4">
             <SiteHeader />
             {children}
           </main>
@@ -24,11 +24,4 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </SidebarProvider>
     </Providers>
   );
-}
-
-{
-  /*
-  
-  rounded-xl border-[0.5px] bg-background/75 
-  */
 }

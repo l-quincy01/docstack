@@ -1,6 +1,10 @@
 "use client";
 import AddDocumentDashboard from "@/components/documents/dialogs/add-document-dashboard";
 import DocumentCard from "@/components/documents/document-card";
+import {
+  useActiveDocumentsByUserQuery,
+  useDocumentsByUserQuery,
+} from "@/hooks/document/useDocument";
 import { useMyProfile } from "@/hooks/profile/useProfile";
 import { useAuth } from "@clerk/nextjs";
 
@@ -12,25 +16,12 @@ export default function Page() {
 
   const { data, isLoading, isError, error } = useMyProfile();
 
-  // useEffect(() => {
-  //   const callApi = async () => {
-  //     const token = await getToken();
-
-  //     console.log("MY TOKEN:", token);
-
-  //     if (!token) return;
-
-  //     const res = await fetch("http://localhost:8080/api/test", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     console.log("API RESPONSE:", await res.text());
-  //   };
-
-  //   callApi();
-  // }, [getToken]);
+  const {
+    data: userDocuments,
+    isLoading: isDocumentsLoading,
+    isError: isDocumentsError,
+    error: errorDocuments,
+  } = useActiveDocumentsByUserQuery();
 
   function getTimeOfDayMessage(): string {
     const hour = new Date().getHours();
@@ -66,14 +57,11 @@ export default function Page() {
 
         <div className="text-2xl font-bold">Recents</div>
 
-        <DocumentCard
-          cardData={{
-            name: "Math Analysis",
-            date: "2026 March 16",
-            topic: "Math",
-            thumbnail: "",
-          }}
-        />
+        <div className="flex flex-row flex-wrap gap-4">
+          {userDocuments?.map((doc) => (
+            <DocumentCard key={doc.id} cardData={doc} />
+          ))}
+        </div>
       </div>
     </div>
   );

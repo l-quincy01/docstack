@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useAuth, useSignIn, useSignUp } from "@clerk/nextjs";
 import { OAuthStrategy } from "@clerk/types";
 
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ export function LoginForm({
     signUp,
     setActive: setActiveFromSignUp,
   } = useSignUp();
+  const { getToken } = useAuth();
 
   // UI state
   const [mode, setMode] = useState<Mode>("signin");
@@ -93,14 +94,28 @@ export function LoginForm({
   async function onVerify(e: React.FormEvent) {
     e.preventDefault();
     if (!ready) return;
+
     setSubmitting(true);
     setError(null);
+
     try {
       const res = await signUp!.attemptEmailAddressVerification({
         code: verifyCode,
       });
+
       if (res.status === "complete") {
         await setActiveFromSignUp!({ session: res.createdSessionId });
+
+        const token = await getToken();
+        if (!token) throw new Error("No auth token");
+
+        await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/profile/me/sync`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         router.push("/dashboard");
       } else {
         setError("Verification not complete.");

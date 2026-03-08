@@ -1,9 +1,9 @@
 package com.octo.docstack.service.impl;
 
 import com.octo.docstack.domain.Profile;
-import com.octo.docstack.dto.ProfileCreateRequest;
-import com.octo.docstack.dto.ProfileResponse;
-import com.octo.docstack.dto.ProfileUpdateRequest;
+import com.octo.docstack.dto.profile.ProfileCreateRequest;
+import com.octo.docstack.dto.profile.ProfileResponse;
+import com.octo.docstack.dto.profile.ProfileUpdateRequest;
 import com.octo.docstack.exception.ExternalServiceException;
 import com.octo.docstack.exception.ResourceNotFoundException;
 import com.octo.docstack.mapper.ProfileMapper;
@@ -135,11 +135,31 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void deleteProfile(String clerkUserId) {
 
-        Profile userProfile = profileRepository
-                .findByClerkUserId(clerkUserId)
-                .orElseThrow(() -> new ResourceNotFoundException("User profile from clerk with ID: " + clerkUserId + " not found." ));
 
-        profileRepository.delete(userProfile);
+        try {
+            restClient.delete()
+                    .uri("https://api.clerk.com/v1/users/{id}", clerkUserId)
+                    .header("Authorization", "Bearer " + clerkSecretKey)
+                    .retrieve()
+                    .toBodilessEntity();
+
+        } catch (org.springframework.web.client.HttpClientErrorException.NotFound ex) {
+
+
+            System.out.println("Clerk user already deleted: " + clerkUserId);
+
+        } catch (Exception ex) {
+
+
+            throw new ExternalServiceException(
+                    "Failed to delete Clerk user: " + ex.getMessage()
+            );
+        }
+
+
+        profileRepository.findByClerkUserId(clerkUserId)
+                .ifPresent(profileRepository::delete);
+
 
     }
 }

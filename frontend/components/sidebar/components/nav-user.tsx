@@ -53,7 +53,9 @@ export function NavUser() {
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{data?.email}</span>
-              <span className="text-muted-foreground truncate text-xs"></span>
+              <span className="text-muted-foreground truncate text-xs">
+                {data?.firstName + " "} {data?.lastName}
+              </span>
             </div>
           </Link>
           <DropdownMenu>

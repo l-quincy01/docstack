@@ -1,24 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { type Icon } from "@tabler/icons-react";
-
-import {
-  IconCreditCard,
-  IconDotsVertical,
-  IconLogout,
-  IconNotification,
-  IconUserCircle,
-} from "@tabler/icons-react";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -31,64 +17,46 @@ import {
   File,
   Maximize2,
   Minimize2,
-  Minus,
-  PencilRuler,
-  Plug,
-  Plus,
-  Timer,
-  TimerIcon,
   ToolCase,
   Trash2,
   Undo2,
 } from "lucide-react";
-
-import { useRef, useState, useEffect } from "react";
-
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Command,
-  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
+import { toast } from "sonner";
+import {
+  usePermanentDeleteDocumentMutation,
+  useRecoverDocumentMutation,
+  useTrashDocumentsQuery,
+} from "@/hooks/document/useTrashDocuments";
 
 export function NavSecondary() {
   const { isMobile } = useSidebar();
-
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  //fullscreen functionality
+  const {
+    data: documentTrash = [],
+    isLoading,
+    isError,
+    error,
+  } = useTrashDocumentsQuery();
+
+  const recoverMutation = useRecoverDocumentMutation();
+  const deleteMutation = usePermanentDeleteDocumentMutation();
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -101,7 +69,6 @@ export function NavSecondary() {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  //toggling fullscreen
   const toggleFullscreen = async () => {
     if (typeof window === "undefined") return;
 
@@ -111,23 +78,31 @@ export function NavSecondary() {
       } else {
         await document.exitFullscreen();
       }
-    } catch (error) {
-      console.error("Error toggling fullscreen:", error);
-
-      try {
-        const elem = document.documentElement as any;
-        if (elem.webkitRequestFullscreen) {
-          await elem.webkitRequestFullscreen();
-        } else if (elem.mozRequestFullScreen) {
-          await elem.mozRequestFullScreen();
-        } else if (elem.msRequestFullscreen) {
-          await elem.msRequestFullscreen();
-        }
-      } catch (fallbackError) {
-        console.error("Fullscreen not supported:", fallbackError);
-      }
+    } catch (e) {
+      console.error("Error toggling fullscreen:", e);
     }
   };
+
+  async function handleRecover(documentId: string, title: string) {
+    try {
+      await recoverMutation.mutateAsync(documentId);
+      toast.success(`Recovered "${title}"`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to recover document");
+    }
+  }
+
+  async function handlePermanentDelete(documentId: string, title: string) {
+    const ok = window.confirm(`Delete "${title}" permanently?`);
+    if (!ok) return;
+
+    try {
+      await deleteMutation.mutateAsync(documentId);
+      toast.success(`Deleted "${title}" permanently`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to delete document");
+    }
+  }
 
   return (
     <SidebarMenu>
@@ -138,35 +113,68 @@ export function NavSecondary() {
               <span className="mr-2">
                 <Trash2 />
               </span>
-              <span>Trash </span>
+              <span>Trash</span>
             </SidebarMenuButton>
           </PopoverTrigger>
 
           <PopoverContent className="w-fit ml-16">
-            <Command className=" w-md rounded-sm ">
+            <Command className="w-md rounded-sm">
               <CommandInput
                 className="border-none"
                 placeholder="Search deleted documents..."
               />
               <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
+                {isLoading && (
+                  <div className="p-3 text-sm text-muted-foreground">
+                    Loading trash...
+                  </div>
+                )}
+
+                {isError && (
+                  <div className="p-3 text-sm text-destructive">
+                    {(error as Error)?.message ?? "Failed to load trash"}
+                  </div>
+                )}
+
+                {!isLoading && !isError && documentTrash.length === 0 && (
+                  <CommandEmpty>No results found.</CommandEmpty>
+                )}
+
                 <CommandGroup heading="Deleted Documents">
-                  <CommandItem>
-                    <div className="w-full flex flex-row justify-between items-center">
-                      <div className="inline-flex items-center gap-2">
-                        <File size={18} />
-                        Name of Document
-                      </div>
-                      <div className="inline-flex items-center gap-2">
-                        <div className="p-2 cursor-pointer hover:bg-muted rounded-lg">
-                          <Undo2 size={18} />
+                  {documentTrash.map((doc) => (
+                    <CommandItem key={doc.id} value={doc.title}>
+                      <div className="w-full flex flex-row justify-between items-center">
+                        <div className="inline-flex items-center gap-2">
+                          <File size={18} />
+                          <span className="line-clamp-1">{doc.title}</span>
                         </div>
-                        <div className="p-2 cursor-pointer hover:bg-muted rounded-lg">
-                          <Trash2 size={18} />
+
+                        <div className="inline-flex items-center gap-2">
+                          <button
+                            type="button"
+                            className="p-2 cursor-pointer hover:bg-muted rounded-lg"
+                            onClick={() => handleRecover(doc.id, doc.title)}
+                            disabled={recoverMutation.isPending}
+                            aria-label="Recover"
+                          >
+                            <Undo2 size={18} />
+                          </button>
+
+                          <button
+                            type="button"
+                            className="p-2 cursor-pointer hover:bg-muted rounded-lg"
+                            onClick={() =>
+                              handlePermanentDelete(doc.id, doc.title)
+                            }
+                            disabled={deleteMutation.isPending}
+                            aria-label="Delete permanently"
+                          >
+                            <Trash2 size={18} />
+                          </button>
                         </div>
                       </div>
-                    </div>
-                  </CommandItem>
+                    </CommandItem>
+                  ))}
                 </CommandGroup>
               </CommandList>
             </Command>
@@ -181,7 +189,7 @@ export function NavSecondary() {
               <span className="mr-2">
                 <ToolCase size={18} />
               </span>
-              <span>Utilities </span>
+              <span>Utilities</span>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -190,24 +198,22 @@ export function NavSecondary() {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuItem onClick={toggleFullscreen} className="">
+            <DropdownMenuItem onClick={toggleFullscreen}>
               {isFullscreen ? (
-                <div className="flex flex-row gap-2  ">
+                <div className="flex flex-row gap-2">
                   <Minimize2 size={14} />
                   <span>Exit Fullscreen</span>
                 </div>
               ) : (
-                <div className="flex flex-row gap-2 ">
-                  {" "}
-                  <Maximize2 size={14} /> <span>Enter Fullscreen</span>
+                <div className="flex flex-row gap-2">
+                  <Maximize2 size={14} />
+                  <span>Enter Fullscreen</span>
                 </div>
               )}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
-
-      {/*Connect to LMS Form */}
     </SidebarMenu>
   );
 }

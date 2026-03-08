@@ -8,6 +8,10 @@ export interface Profile {
 }
 
 export const profileService = {
+  createProfile(token: string) {
+    return apiFetch("/api/profile/me/sync", { method: "POST" }, token);
+  },
+
   getMyProfile(token: string) {
     return apiFetch<Profile>("/api/profile/me", { method: "GET" }, token);
   },

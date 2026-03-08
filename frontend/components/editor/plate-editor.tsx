@@ -17,8 +17,8 @@ export function PlateEditor() {
 
   return (
     <Plate editor={editor}>
-      <EditorContainer>
-        <Editor variant="demo" className="h-full  scrollbar-hide" />
+      <EditorContainer className="scrollbar-hide max-h-[90vh] ">
+        <Editor variant="demo" className="  scrollbar-hide" />
       </EditorContainer>
 
       <SettingsDialog />
@@ -49,7 +49,7 @@ const value = normalizeNodeId([
     ],
     type: "p",
   },
-  // Suggestions & Comments Section
+
   {
     children: [{ text: "Collaborative Editing" }],
     type: "h2",
