@@ -5,7 +5,7 @@ import DocumentCard from "@/components/documents/document-card";
 import { useDocumentsByTopicQuery } from "@/hooks/document/useDocument";
 import { useTopicsQuery } from "@/hooks/topics/useTopics";
 import { useParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 export default function Page() {
   const params = useParams<{ topicId: string }>();
@@ -27,11 +27,41 @@ export default function Page() {
   } = useDocumentsByTopicQuery(topicId);
 
   const topicTitle = topics.find((topic) => topic.id === topicId);
+  const [tabs, setTabs] = useState<TabItem[]>([
+    { id: "1", label: "Learn Tab 1" },
+  ]);
+
+  const [activeTab, setActiveTab] = useState("1");
+
+  const addTab = () => {
+    if (tabs.length >= 5) return;
+
+    const newId = (tabs.length + 1).toString();
+
+    const newTab = {
+      id: newId,
+      label: `Learn Tab ${newId}`,
+    };
+
+    setTabs([...tabs, newTab]);
+    setActiveTab(newId);
+  };
+
+  const removeTab = (id: string) => {
+    if (tabs.length <= 1) return;
+
+    const updated = tabs.filter((tab) => tab.id !== id);
+    setTabs(updated);
+
+    if (activeTab === id) {
+      setActiveTab(updated[0].id);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-row w-full justify-center">
-        <div className="text-2xl font-bold">{topicTitle?.title}</div>
+        {/* <div className="text-2xl font-bold">{topicTitle?.title}</div> */}
       </div>
 
       <div className="text-muted-foreground font-bold">
