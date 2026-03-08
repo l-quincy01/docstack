@@ -15,6 +15,7 @@ import EditDocument from "@/components/documents/dialogs/edit-document";
 import { useTrashDocumentMutation } from "@/hooks/document/useDocument";
 import { DocumentCardItem } from "@/lib/types/document";
 import { StaticPlatePreview } from "../editor/StaticPlatePreview";
+import { normalizeNodeId, Value } from "platejs";
 
 export default function DocumentCard({
   cardData,
