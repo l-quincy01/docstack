@@ -2,8 +2,11 @@
 
 import AddDocument from "@/components/documents/dialogs/add-document";
 import DocumentCard from "@/components/documents/document-card";
+import { Button } from "@/components/ui/button";
 import { useDocumentsByTopicQuery } from "@/hooks/document/useDocument";
 import { useTopicsQuery } from "@/hooks/topics/useTopics";
+import { Waypoints } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 
@@ -30,15 +33,20 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-row w-full justify-center">
-        {/* <div className="text-2xl font-bold">{topicTitle?.title}</div> */}
-      </div>
+      <div className="flex flex-row w-full justify-center"></div>
 
       <div className="text-muted-foreground font-bold">
         Start a new document
       </div>
 
-      <AddDocument />
+      <div className="flex flex-row justify-between items-end">
+        <AddDocument />
+        <Link href={`/topics/some-Topic-ID/graph`}>
+          <Button variant="ghost">
+            <Waypoints />
+          </Button>
+        </Link>
+      </div>
 
       {isLoading && (
         <div className="text-sm text-muted-foreground">
