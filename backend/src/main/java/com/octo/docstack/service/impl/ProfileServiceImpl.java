@@ -7,7 +7,7 @@ import com.octo.docstack.dto.profile.ProfileUpdateRequest;
 import com.octo.docstack.exception.ExternalServiceException;
 import com.octo.docstack.exception.ResourceNotFoundException;
 import com.octo.docstack.mapper.ProfileMapper;
-import com.octo.docstack.repository.ProfileRepository;
+import com.octo.docstack.repository.profile.ProfileRepository;
 import com.octo.docstack.service.ProfileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

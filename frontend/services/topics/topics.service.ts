@@ -3,7 +3,7 @@ import type {
   Topic,
   CreateTopicRequest,
   DeleteTopicResponse,
-} from "@/lib/types/topic";
+} from "@/lib/types/topic/topic.types";
 
 export async function getTopics(token: string): Promise<Topic[]> {
   return apiFetch<Topic[]>("/api/topics", { method: "GET" }, token);

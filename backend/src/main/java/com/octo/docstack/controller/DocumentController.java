@@ -4,8 +4,8 @@ package com.octo.docstack.controller;
 
 import com.octo.docstack.common.CurrentUserService;
 import com.octo.docstack.dto.document.*;
-import com.octo.docstack.entities.DocItem;
-import com.octo.docstack.entities.DocItemStatus;
+import com.octo.docstack.entities.document.DocItem;
+import com.octo.docstack.entities.document.DocItemStatus;
 import com.octo.docstack.mapper.DocumentMapper;
 import com.octo.docstack.service.DocumentService;
 import com.octo.docstack.service.ThumbnailService;

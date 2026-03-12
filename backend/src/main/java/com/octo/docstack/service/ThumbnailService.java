@@ -4,10 +4,10 @@ package com.octo.docstack.service;
 
 import com.octo.docstack.config.R2Properties;
 import com.octo.docstack.dto.document.ThumbnailPresignResponse;
-import com.octo.docstack.entities.DocItem;
+import com.octo.docstack.entities.document.DocItem;
 
 import com.octo.docstack.exception.ResourceNotFoundException;
-import com.octo.docstack.repository.DocumentRepository;
+import com.octo.docstack.repository.document.DocumentRepository;
 import org.springframework.stereotype.Service;
 
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
