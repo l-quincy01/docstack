@@ -1,6 +1,6 @@
 package com.octo.docstack.dto.document;
 
-import com.octo.docstack.entities.DocItemStatus;
+import com.octo.docstack.entities.document.DocItemStatus;
 import java.time.Instant;
 
 public class DocumentResponse {

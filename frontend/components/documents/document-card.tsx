@@ -13,7 +13,7 @@ import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import { toast } from "sonner";
 import EditDocument from "@/components/documents/dialogs/edit-document";
 import { useTrashDocumentMutation } from "@/hooks/document/useDocument";
-import { DocumentCardItem } from "@/lib/types/document";
+import { DocumentCardItem } from "@/lib/types/document/document.types";
 import { StaticPlatePreview } from "../editor/StaticPlatePreview";
 import { normalizeNodeId, Value } from "platejs";
 

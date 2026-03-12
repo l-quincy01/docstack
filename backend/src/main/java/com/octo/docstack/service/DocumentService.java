@@ -4,13 +4,13 @@ import com.octo.docstack.dto.document.CreateDocumentRequest;
 import com.octo.docstack.dto.document.DocumentContentResponse;
 import com.octo.docstack.dto.document.UpdateDocumentContentRequest;
 import com.octo.docstack.dto.document.UpdateDocumentRequest;
-import com.octo.docstack.entities.DocItem;
-import com.octo.docstack.entities.DocItemStatus;
-import com.octo.docstack.entities.TopicTitleProjection;
+import com.octo.docstack.entities.document.DocItem;
+import com.octo.docstack.entities.document.DocItemStatus;
+import com.octo.docstack.entities.topic.TopicTitleProjection;
 import com.octo.docstack.exception.ResourceNotFoundException;
-import com.octo.docstack.repository.DocumentRepository;
+import com.octo.docstack.repository.document.DocumentRepository;
 
-import com.octo.docstack.repository.TopicRepository;
+import com.octo.docstack.repository.topic.TopicRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

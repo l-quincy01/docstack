@@ -8,7 +8,7 @@ import {
   getTopics,
   renameTopic,
 } from "@/services/topics/topics.service";
-import type { Topic } from "@/lib/types/topic";
+import type { Topic } from "@/lib/types/topic/topic.types";
 
 export const topicKeys = {
   all: ["topics"] as const,

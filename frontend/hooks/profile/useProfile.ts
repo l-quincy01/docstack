@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@clerk/nextjs";
-import { profileService } from "@/services/profile/profileService";
-import type { Profile } from "@/services/profile/profileService";
+import { profileService } from "@/services/profile/profile.service";
+import type { Profile } from "@/services/profile/profile.service";
 
 export function useMyProfile() {
   const { getToken } = useAuth();

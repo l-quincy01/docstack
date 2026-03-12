@@ -3,7 +3,10 @@
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { DocumentCardItem, DocumentItem } from "@/lib/types/document";
+import type {
+  DocumentCardItem,
+  DocumentItem,
+} from "@/lib/types/document/document.types";
 import {
   createDocument,
   getActiveDocumentsByUser,

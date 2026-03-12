@@ -1,4 +1,4 @@
-package com.octo.docstack.entities;
+package com.octo.docstack.entities.topic;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.CreatedDate;

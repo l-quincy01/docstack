@@ -3,7 +3,7 @@ import type {
   CreateDocumentRequest,
   DocumentCardItem,
   DocumentItem,
-} from "@/lib/types/document";
+} from "@/lib/types/document/document.types";
 
 export async function createDocument(
   payload: CreateDocumentRequest,

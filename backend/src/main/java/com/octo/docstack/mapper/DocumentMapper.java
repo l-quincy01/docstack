@@ -3,7 +3,7 @@ package com.octo.docstack.mapper;
 
 import com.octo.docstack.dto.document.DocumentCardResponse;
 import com.octo.docstack.dto.document.DocumentResponse;
-import com.octo.docstack.entities.DocItem;
+import com.octo.docstack.entities.document.DocItem;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
