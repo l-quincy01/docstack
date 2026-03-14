@@ -39,7 +39,33 @@ export function SiteHeader() {
           {isDashboard && "Dashboard"}
 
           {/* Topic page */}
-          {isTopicPage && topic?.title}
+          {isTopicPage && (
+            <>
+              {!maximise && topic && (
+                <Link
+                  href={`/topics/${topicId}`}
+                  className="hover:underline text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {topic.title}
+                </Link>
+              )}
+
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={() => {
+                  setOpen(false);
+                  setMaximise((v) => !v);
+                }}
+              >
+                {maximise ? (
+                  <Minimize2 className=" rotate-90" size={16} />
+                ) : (
+                  <Maximize2 className=" rotate-90" size={16} />
+                )}
+              </Button>
+            </>
+          )}
 
           {/* Document page */}
           {isDocumentPage && (

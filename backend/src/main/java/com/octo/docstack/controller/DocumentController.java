@@ -24,7 +24,7 @@ public class DocumentController {
     private final DocumentService documentService;
     private final DocumentMapper documentMapper;
     private final CurrentUserService currentUserService;
-    private final ThumbnailService thumbnailService ;
+ //   private final ThumbnailService thumbnailService ;
 
     public DocumentController(
             DocumentService documentService,
@@ -35,7 +35,7 @@ public class DocumentController {
         this.documentService = documentService;
         this.documentMapper = documentMapper;
         this.currentUserService = currentUserService;
-        this.thumbnailService = thumbnailService ;
+      //  this.thumbnailService = thumbnailService ;
     }
 
 
@@ -156,7 +156,7 @@ public class DocumentController {
         );
     }
 
-    @PostMapping("/{documentId}/thumbnail/presign")
+  /*  @PostMapping("/{documentId}/thumbnail/presign")
     public ResponseEntity<ThumbnailPresignResponse> presignThumbnailUpload(
            Authentication authentication,
             @PathVariable String documentId
@@ -166,9 +166,9 @@ public class DocumentController {
                 thumbnailService.createThumbnailUploadUrl(userId, documentId);
 
         return ResponseEntity.ok(response);
-    }
+    }*/
 
-    @PatchMapping("/{documentId}/thumbnail")
+   /* @PatchMapping("/{documentId}/thumbnail")
     public ResponseEntity<DocumentResponse> updateThumbnail(
            Authentication authentication,
             @PathVariable String documentId,
@@ -177,7 +177,7 @@ public class DocumentController {
         String userId = currentUserService.getCurrentUserId(authentication);
         DocItem updated = documentService.updateThumbnailUrl(userId, documentId, req.getThumbnailUrl());
         return ResponseEntity.ok(documentMapper.toDocumentResponse(updated));
-    }
+    }*/
 
 
 

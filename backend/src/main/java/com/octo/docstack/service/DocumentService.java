@@ -4,6 +4,7 @@ import com.octo.docstack.dto.document.CreateDocumentRequest;
 import com.octo.docstack.dto.document.DocumentContentResponse;
 import com.octo.docstack.dto.document.UpdateDocumentContentRequest;
 import com.octo.docstack.dto.document.UpdateDocumentRequest;
+import com.octo.docstack.dto.graph.DocumentSavedEvent;
 import com.octo.docstack.entities.document.DocItem;
 import com.octo.docstack.entities.document.DocItemStatus;
 import com.octo.docstack.entities.topic.TopicTitleProjection;
@@ -11,6 +12,8 @@ import com.octo.docstack.exception.ResourceNotFoundException;
 import com.octo.docstack.repository.document.DocumentRepository;
 
 import com.octo.docstack.repository.topic.TopicRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,14 +21,20 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
+
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
     private final TopicRepository topicRepository;
+    private final GraphService graphService;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public DocumentService(DocumentRepository documentRepository, TopicRepository topicRepository) {
+
+    public DocumentService(DocumentRepository documentRepository, TopicRepository topicRepository, GraphService graphService, ApplicationEventPublisher eventPublisher) {
         this.documentRepository = documentRepository;
         this.topicRepository = topicRepository;
+        this.graphService = graphService;
+        this.eventPublisher = eventPublisher;
     }
 
     public DocItem create(String userId, CreateDocumentRequest req) {
@@ -45,7 +54,11 @@ public class DocumentService {
         doc.setContent(req.getContent() == null ? "" : req.getContent());
         doc.setStatus(DocItemStatus.ACTIVE);
 
-        return documentRepository.save(doc);
+        //for graph creations
+        DocItem savedDoc = documentRepository.save(doc);
+        publishDocumentSavedEvent(savedDoc);
+
+        return savedDoc ;
     }
 
     public List<DocItem> listActiveByTopic(String userId, String topicId) {
@@ -82,8 +95,12 @@ public class DocumentService {
         if (req.getContent() != null) {
             doc.setContent(req.getContent());
         }
+    //for graph creations
+            DocItem savedDoc = documentRepository.save(doc) ;
+            publishDocumentSavedEvent(savedDoc);
 
-        return documentRepository.save(doc);
+        return savedDoc ;
+
     }
 
     public void trash(String userId, String documentId) {
@@ -95,6 +112,7 @@ public class DocumentService {
 
         doc.setStatus(DocItemStatus.TRASHED);
         documentRepository.save(doc);
+        graphService.removeDocumentFromGraph(doc.getTopicId(), doc.getId());
     }
 
     public void recover(String userId, String documentId) {
@@ -103,7 +121,11 @@ public class DocumentService {
         assertTopicOwnedByUser(userId, doc.getTopicId());
 
         doc.setStatus(DocItemStatus.ACTIVE);
-        documentRepository.save(doc);
+
+        DocItem savedDoc = documentRepository.save(doc);
+
+        publishDocumentSavedEvent(savedDoc);
+
     }
 
     public List<DocItem> listByStatus(String userId, DocItemStatus status) {
@@ -123,6 +145,7 @@ public class DocumentService {
     public void permanentDelete(String userId, String documentId) {
         DocItem doc = getById(userId, documentId);
         documentRepository.delete(doc);
+        graphService.removeDocumentFromGraph(doc.getTopicId(), doc.getId());
     }
 
     private void assertTopicOwnedByUser(String userId, String topicId) {
@@ -157,10 +180,16 @@ public class DocumentService {
             throw new ResourceNotFoundException("Document not found");
         }
 
+
         doc.setContent(req.getContent());
         doc.setUpdatedAt(Instant.now());
 
-        documentRepository.save(doc);
+
+
+        DocItem savedDoc = documentRepository.save(doc) ;
+        publishDocumentSavedEvent(savedDoc);
+
+
 
         return new DocumentContentResponse(
                 doc.getId(),
@@ -185,4 +214,17 @@ public class DocumentService {
         return documentRepository.save(doc);
     }
 
+    private void publishDocumentSavedEvent(DocItem doc) {
+        System.out.println("Publishing DocumentSavedEvent for docId=" + doc.getId());
+
+        eventPublisher.publishEvent(new DocumentSavedEvent(
+                doc.getId(),
+                doc.getTopicId(),
+                doc.getTitle(),
+                doc.getContent()
+        ));
+    }
+
 }
+
+

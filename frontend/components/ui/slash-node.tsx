@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
+import { useParams } from "next/navigation";
 
-import type { PlateEditor, PlateElementProps } from 'platejs/react';
+import type { PlateEditor, PlateElementProps } from "platejs/react";
 
-import { AIChatPlugin } from '@platejs/ai/react';
+import { AIChatPlugin } from "@platejs/ai/react";
 import {
   CalendarIcon,
   ChevronRightIcon,
@@ -14,6 +15,7 @@ import {
   Heading2Icon,
   Heading3Icon,
   LightbulbIcon,
+  Link as LinkIcon,
   ListIcon,
   ListOrdered,
   PenToolIcon,
@@ -24,14 +26,16 @@ import {
   Square,
   Table,
   TableOfContentsIcon,
-} from 'lucide-react';
-import { type TComboboxInputElement, KEYS } from 'platejs';
-import { PlateElement } from 'platejs/react';
+} from "lucide-react";
+import { type TComboboxInputElement, KEYS } from "platejs";
+import { PlateElement } from "platejs/react";
 
 import {
   insertBlock,
   insertInlineElement,
-} from '@/components/editor/transforms';
+} from "@/components/editor/transforms";
+
+import { DocumentLinkPickerModal } from "@/components/editor/document-link-picker-modal";
 
 import {
   InlineCombobox,
@@ -41,7 +45,9 @@ import {
   InlineComboboxGroupLabel,
   InlineComboboxInput,
   InlineComboboxItem,
-} from './inline-combobox';
+} from "./inline-combobox";
+import { insertInternalDocumentLink } from "../editor/transforms/insert-internal-document-link";
+import { useDocumentLinkPickerStore } from "@/components/editor/stores/document-link-picker-store";
 
 type Group = {
   group: string;
@@ -56,177 +62,195 @@ type Group = {
   }[];
 };
 
-const groups: Group[] = [
-  {
-    group: 'AI',
-    items: [
-      {
-        focusEditor: false,
-        icon: <SparklesIcon />,
-        value: 'AI',
-        onSelect: (editor) => {
-          editor.getApi(AIChatPlugin).aiChat.show();
-        },
-      },
-    ],
-  },
-  {
-    group: 'Basic blocks',
-    items: [
-      {
-        icon: <PilcrowIcon />,
-        keywords: ['paragraph'],
-        label: 'Text',
-        value: KEYS.p,
-      },
-      {
-        icon: <Heading1Icon />,
-        keywords: ['title', 'h1'],
-        label: 'Heading 1',
-        value: KEYS.h1,
-      },
-      {
-        icon: <Heading2Icon />,
-        keywords: ['subtitle', 'h2'],
-        label: 'Heading 2',
-        value: KEYS.h2,
-      },
-      {
-        icon: <Heading3Icon />,
-        keywords: ['subtitle', 'h3'],
-        label: 'Heading 3',
-        value: KEYS.h3,
-      },
-      {
-        icon: <ListIcon />,
-        keywords: ['unordered', 'ul', '-'],
-        label: 'Bulleted list',
-        value: KEYS.ul,
-      },
-      {
-        icon: <ListOrdered />,
-        keywords: ['ordered', 'ol', '1'],
-        label: 'Numbered list',
-        value: KEYS.ol,
-      },
-      {
-        icon: <Square />,
-        keywords: ['checklist', 'task', 'checkbox', '[]'],
-        label: 'To-do list',
-        value: KEYS.listTodo,
-      },
-      {
-        icon: <ChevronRightIcon />,
-        keywords: ['collapsible', 'expandable'],
-        label: 'Toggle',
-        value: KEYS.toggle,
-      },
-      {
-        icon: <Code2 />,
-        keywords: ['```'],
-        label: 'Code Block',
-        value: KEYS.codeBlock,
-      },
-      {
-        icon: <Table />,
-        label: 'Table',
-        value: KEYS.table,
-      },
-      {
-        icon: <Quote />,
-        keywords: ['citation', 'blockquote', 'quote', '>'],
-        label: 'Blockquote',
-        value: KEYS.blockquote,
-      },
-      {
-        description: 'Insert a highlighted block.',
-        icon: <LightbulbIcon />,
-        keywords: ['note'],
-        label: 'Callout',
-        value: KEYS.callout,
-      },
-    ].map((item) => ({
-      ...item,
-      onSelect: (editor, value) => {
-        insertBlock(editor, value, { upsert: true });
-      },
-    })),
-  },
-  {
-    group: 'Advanced blocks',
-    items: [
-      {
-        icon: <TableOfContentsIcon />,
-        keywords: ['toc'],
-        label: 'Table of contents',
-        value: KEYS.toc,
-      },
-      {
-        icon: <Columns3Icon />,
-        label: '3 columns',
-        value: 'action_three_columns',
-      },
-      {
-        focusEditor: false,
-        icon: <RadicalIcon />,
-        label: 'Equation',
-        value: KEYS.equation,
-      },
-      {
-        icon: <PenToolIcon />,
-        keywords: ['excalidraw'],
-        label: 'Excalidraw',
-        value: KEYS.excalidraw,
-      },
-      {
-        icon: <Code2 />,
-        keywords: [
-          'code-drawing',
-          'diagram',
-          'plantuml',
-          'graphviz',
-          'flowchart',
-          'mermaid',
-        ],
-        label: 'Code Drawing',
-        value: KEYS.codeDrawing,
-      },
-    ].map((item) => ({
-      ...item,
-      onSelect: (editor, value) => {
-        insertBlock(editor, value, { upsert: true });
-      },
-    })),
-  },
-  {
-    group: 'Inline',
-    items: [
-      {
-        focusEditor: true,
-        icon: <CalendarIcon />,
-        keywords: ['time'],
-        label: 'Date',
-        value: KEYS.date,
-      },
-      {
-        focusEditor: false,
-        icon: <RadicalIcon />,
-        label: 'Inline Equation',
-        value: KEYS.inlineEquation,
-      },
-    ].map((item) => ({
-      ...item,
-      onSelect: (editor, value) => {
-        insertInlineElement(editor, value);
-      },
-    })),
-  },
-];
-
 export function SlashInputElement(
   props: PlateElementProps<TComboboxInputElement>
 ) {
   const { editor, element } = props;
+  const params = useParams<{ topicId?: string }>();
+  const topicId = params?.topicId ?? "";
+
+  const openPicker = useDocumentLinkPickerStore((state) => state.openPicker);
+
+  const groups: Group[] = [
+    {
+      group: "AI",
+      items: [
+        {
+          focusEditor: false,
+          icon: <SparklesIcon />,
+          value: "AI",
+          onSelect: (editor) => {
+            editor.getApi(AIChatPlugin).aiChat.show();
+          },
+        },
+      ],
+    },
+    {
+      group: "Basic blocks",
+      items: [
+        {
+          icon: <PilcrowIcon />,
+          keywords: ["paragraph"],
+          label: "Text",
+          value: KEYS.p,
+        },
+        {
+          icon: <Heading1Icon />,
+          keywords: ["title", "h1"],
+          label: "Heading 1",
+          value: KEYS.h1,
+        },
+        {
+          icon: <Heading2Icon />,
+          keywords: ["subtitle", "h2"],
+          label: "Heading 2",
+          value: KEYS.h2,
+        },
+        {
+          icon: <Heading3Icon />,
+          keywords: ["subtitle", "h3"],
+          label: "Heading 3",
+          value: KEYS.h3,
+        },
+        {
+          icon: <ListIcon />,
+          keywords: ["unordered", "ul", "-"],
+          label: "Bulleted list",
+          value: KEYS.ul,
+        },
+        {
+          icon: <ListOrdered />,
+          keywords: ["ordered", "ol", "1"],
+          label: "Numbered list",
+          value: KEYS.ol,
+        },
+        {
+          icon: <Square />,
+          keywords: ["checklist", "task", "checkbox", "[]"],
+          label: "To-do list",
+          value: KEYS.listTodo,
+        },
+        {
+          icon: <ChevronRightIcon />,
+          keywords: ["collapsible", "expandable"],
+          label: "Toggle",
+          value: KEYS.toggle,
+        },
+        {
+          icon: <Code2 />,
+          keywords: ["```"],
+          label: "Code Block",
+          value: KEYS.codeBlock,
+        },
+        {
+          icon: <Table />,
+          label: "Table",
+          value: KEYS.table,
+        },
+        {
+          icon: <Quote />,
+          keywords: ["citation", "blockquote", "quote", ">"],
+          label: "Blockquote",
+          value: KEYS.blockquote,
+        },
+        {
+          icon: <LightbulbIcon />,
+          keywords: ["note"],
+          label: "Callout",
+          value: KEYS.callout,
+        },
+      ].map((item) => ({
+        ...item,
+        onSelect: (editor, value) => {
+          insertBlock(editor, value, { upsert: true });
+        },
+      })),
+    },
+    {
+      group: "Advanced blocks",
+      items: [
+        {
+          icon: <TableOfContentsIcon />,
+          keywords: ["toc"],
+          label: "Table of contents",
+          value: KEYS.toc,
+        },
+        {
+          icon: <Columns3Icon />,
+          label: "3 columns",
+          value: "action_three_columns",
+        },
+        {
+          focusEditor: false,
+          icon: <RadicalIcon />,
+          label: "Equation",
+          value: KEYS.equation,
+        },
+        {
+          icon: <PenToolIcon />,
+          keywords: ["excalidraw"],
+          label: "Excalidraw",
+          value: KEYS.excalidraw,
+        },
+        {
+          icon: <Code2 />,
+          keywords: [
+            "code-drawing",
+            "diagram",
+            "plantuml",
+            "graphviz",
+            "flowchart",
+            "mermaid",
+          ],
+          label: "Code Drawing",
+          value: KEYS.codeDrawing,
+        },
+      ].map((item) => ({
+        ...item,
+        onSelect: (editor, value) => {
+          insertBlock(editor, value, { upsert: true });
+        },
+      })),
+    },
+    {
+      group: "Inline",
+      items: [
+        {
+          focusEditor: true,
+          icon: <CalendarIcon />,
+          keywords: ["time"],
+          label: "Date",
+          value: KEYS.date,
+        },
+        {
+          focusEditor: false,
+          icon: <RadicalIcon />,
+          label: "Inline Equation",
+          value: KEYS.inlineEquation,
+        },
+      ].map((item) => ({
+        ...item,
+        onSelect: (editor, value) => {
+          insertInlineElement(editor, value);
+        },
+      })),
+    },
+    {
+      group: "Links",
+      items: [
+        {
+          focusEditor: false,
+          icon: <LinkIcon />,
+          keywords: ["link", "document", "internal"],
+          label: "Add link",
+          value: "action_add_internal_link",
+          onSelect: () => {
+            openPicker(topicId);
+          },
+        },
+      ],
+    },
+  ];
 
   return (
     <PlateElement {...props} as="span">

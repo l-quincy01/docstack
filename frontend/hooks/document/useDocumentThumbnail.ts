@@ -1,96 +1,98 @@
-"use client";
+/* No longer in use */
 
-import { RefObject, useEffect, useRef, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
-import type { Value } from "platejs";
+// "use client";
 
-import { captureEditorThumbnailFromClone } from "@/utils/captureEditorThumbnail";
-import { uploadThumbnailToR2 } from "@/utils/uploadThumbnailToR2";
-import { patchDocumentThumbnail } from "@/utils/patchDocumentThumbnail";
+// import { RefObject, useEffect, useRef, useState } from "react";
+// import { useAuth } from "@clerk/nextjs";
+// import type { Value } from "platejs";
 
-type ThumbnailStatus = "idle" | "generating" | "uploading" | "saved" | "error";
+// import { captureEditorThumbnailFromClone } from "@/utils/captureEditorThumbnail";
+// import { uploadThumbnailToR2 } from "@/utils/uploadThumbnailToR2";
+// import { patchDocumentThumbnail } from "@/utils/patchDocumentThumbnail";
 
-type Props = {
-  documentId: string;
-  targetRef: RefObject<HTMLDivElement>;
-  delayMs?: number;
-};
+// type ThumbnailStatus = "idle" | "generating" | "uploading" | "saved" | "error";
 
-export function useDocumentThumbnail({
-  documentId,
-  targetRef,
-  delayMs = 5000,
-}: Props) {
-  const { getToken } = useAuth();
+// type Props = {
+//   documentId: string;
+//   targetRef: RefObject<HTMLDivElement>;
+//   delayMs?: number;
+// };
 
-  const [status, setStatus] = useState<ThumbnailStatus>("idle");
+// export function useDocumentThumbnail({
+//   documentId,
+//   targetRef,
+//   delayMs = 5000,
+// }: Props) {
+//   const { getToken } = useAuth();
 
-  const timerId = useRef<number | null>(null);
-  const lastThumbSource = useRef<string | null>(null);
-  const latestValue = useRef<Value | null>(null);
-  const runSeq = useRef(0);
+//   const [status, setStatus] = useState<ThumbnailStatus>("idle");
 
-  const setBaseline = (value: Value) => {
-    lastThumbSource.current = JSON.stringify(value);
-  };
+//   const timerId = useRef<number | null>(null);
+//   const lastThumbSource = useRef<string | null>(null);
+//   const latestValue = useRef<Value | null>(null);
+//   const runSeq = useRef(0);
 
-  const queueThumbnail = (value: Value) => {
-    latestValue.current = value;
+//   const setBaseline = (value: Value) => {
+//     lastThumbSource.current = JSON.stringify(value);
+//   };
 
-    if (timerId.current) {
-      window.clearTimeout(timerId.current);
-      timerId.current = null;
-    }
+//   const queueThumbnail = (value: Value) => {
+//     latestValue.current = value;
 
-    timerId.current = window.setTimeout(async () => {
-      const currentValue = latestValue.current;
-      const node = targetRef.current;
+//     if (timerId.current) {
+//       window.clearTimeout(timerId.current);
+//       timerId.current = null;
+//     }
 
-      if (!currentValue || !node) return;
+//     timerId.current = window.setTimeout(async () => {
+//       const currentValue = latestValue.current;
+//       const node = targetRef.current;
 
-      const serialized = JSON.stringify(currentValue);
-      if (lastThumbSource.current === serialized) return;
+//       if (!currentValue || !node) return;
 
-      const seq = ++runSeq.current;
+//       const serialized = JSON.stringify(currentValue);
+//       if (lastThumbSource.current === serialized) return;
 
-      try {
-        setStatus("generating");
+//       const seq = ++runSeq.current;
 
-        const blob = await captureEditorThumbnailFromClone(node);
+//       try {
+//         setStatus("generating");
 
-        if (seq !== runSeq.current) return;
+//         const blob = await captureEditorThumbnailFromClone(node);
 
-        const token = await getToken();
+//         if (seq !== runSeq.current) return;
 
-        setStatus("uploading");
+//         const token = await getToken();
 
-        const uploadResult = await uploadThumbnailToR2(blob, documentId, token);
+//         setStatus("uploading");
 
-        if (seq !== runSeq.current) return;
+//         const uploadResult = await uploadThumbnailToR2(blob, documentId, token);
 
-        await patchDocumentThumbnail(documentId, uploadResult.url, token);
+//         if (seq !== runSeq.current) return;
 
-        if (seq !== runSeq.current) return;
+//         await patchDocumentThumbnail(documentId, uploadResult.url, token);
 
-        lastThumbSource.current = serialized;
-        setStatus("saved");
-      } catch (err) {
-        console.error("Thumbnail pipeline failed", err);
-        if (seq !== runSeq.current) return;
-        setStatus("error");
-      }
-    }, delayMs);
-  };
+//         if (seq !== runSeq.current) return;
 
-  useEffect(() => {
-    return () => {
-      if (timerId.current) window.clearTimeout(timerId.current);
-    };
-  }, []);
+//         lastThumbSource.current = serialized;
+//         setStatus("saved");
+//       } catch (err) {
+//         console.error("Thumbnail pipeline failed", err);
+//         if (seq !== runSeq.current) return;
+//         setStatus("error");
+//       }
+//     }, delayMs);
+//   };
 
-  return {
-    status,
-    queueThumbnail,
-    setBaseline,
-  };
-}
+//   useEffect(() => {
+//     return () => {
+//       if (timerId.current) window.clearTimeout(timerId.current);
+//     };
+//   }, []);
+
+//   return {
+//     status,
+//     queueThumbnail,
+//     setBaseline,
+//   };
+// }

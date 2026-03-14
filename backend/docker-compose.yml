@@ -1,5 +1,4 @@
 
-
 services:
   mongo:
     image: mongo:7
@@ -10,6 +9,17 @@ services:
       MONGO_INITDB_DATABASE: appdb
     volumes:
       - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: mongo-express-local
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongo
 
 volumes:
   mongo_data:

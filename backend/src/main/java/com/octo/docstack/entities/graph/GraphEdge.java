@@ -27,6 +27,6 @@ public class GraphEdge {
 
     private String fill;
 
- //meta
+ //other
     private String createdBy;
 }

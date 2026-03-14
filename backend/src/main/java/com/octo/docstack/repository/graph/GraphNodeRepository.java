@@ -1,5 +1,6 @@
 package com.octo.docstack.repository.graph;
 
+import com.octo.docstack.entities.graph.GraphEdge;
 import com.octo.docstack.entities.graph.GraphNode;
 import com.octo.docstack.entities.graph.GraphNodeType;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -24,4 +25,9 @@ public interface GraphNodeRepository extends MongoRepository<GraphNode, String> 
     );
 
     void deleteByTopicId(String topicId);
+
+    List<GraphNode> findByTopicIdAndType(String topicId, GraphNodeType type);
+
+    void deleteByTopicIdAndId(String topicId, String id);
+    //void deleteByTopicIdAndSourceAndLabel(String topicId, String source, GraphEdge label);
 }
