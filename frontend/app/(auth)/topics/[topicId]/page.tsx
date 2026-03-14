@@ -41,7 +41,7 @@ export default function Page() {
 
       <div className="flex flex-row justify-between items-end">
         <AddDocument />
-        <Link href={`/topics/some-Topic-ID/graph`}>
+        <Link href={`/topics/${topicId}/graph`}>
           <Button variant="ghost">
             <Waypoints />
           </Button>

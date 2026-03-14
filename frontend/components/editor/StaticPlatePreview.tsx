@@ -1,33 +1,3 @@
-// "use client";
-
-// import { Plate, usePlateEditor } from "platejs/react";
-// import { Editor, EditorContainer } from "@/components/ui/editor";
-
-// import { normalizeNodeId, Value } from "platejs";
-// import { EditorKitThumbnail } from "./editor-kit-thumbnail";
-
-// const EMPTY_VALUE: Value = normalizeNodeId([
-//   { type: "p", children: [{ text: "" }] },
-// ]);
-
-// export function StaticPlatePreview({ value }: { value: any }) {
-//   const editor = usePlateEditor({
-//     plugins: EditorKitThumbnail,
-//     value: value ?? EMPTY_VALUE,
-//     autoSelect: "end",
-//   });
-
-//   return (
-//     <div className="pointer-events-none scrollbar-hide w-full h-full origin-top-left overflow-hidden">
-//       <Plate editor={editor} readOnly>
-//         <Editor
-//           variant="demo"
-//           className="w-full h-full scale-[0.33] overflow-hidden "
-//         />
-//       </Plate>
-//     </div>
-//   );
-// }
 "use client";
 
 import { Plate, usePlateEditor } from "platejs/react";
@@ -61,7 +31,7 @@ export function StaticPlatePreview({ value }: { value: any }) {
         className="pointer-events-none"
       >
         <Plate editor={editor} readOnly>
-          <Editor className="max-w-[900px] mx-auto overflow-hidden " />
+          <Editor className="w-[900px] mx-auto overflow-hidden " />
         </Plate>
       </div>
     </div>

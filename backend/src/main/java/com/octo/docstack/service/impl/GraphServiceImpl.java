@@ -1,9 +1,11 @@
 package com.octo.docstack.service.impl;
 
 
+import com.octo.docstack.dto.graph.DocumentSavedEvent;
 import com.octo.docstack.dto.graph.GraphEdgeResponse;
 import com.octo.docstack.dto.graph.GraphNodeResponse;
 import com.octo.docstack.dto.graph.TopicKnowledgeGraphResponse;
+import com.octo.docstack.entities.document.DocItem;
 import com.octo.docstack.entities.graph.GraphEdge;
 import com.octo.docstack.entities.graph.GraphEdgeType;
 import com.octo.docstack.entities.graph.GraphNode;
@@ -90,6 +92,43 @@ public class GraphServiceImpl implements GraphService {
 
             graphEdgeRepository.save(edge);
         }
+
+        cleanupOrphanConceptNodes(topicId);
+    }
+
+    @Override
+    public void rebuildLinksForDocument(String topicId, String sourceDocumentId, List<String> targetDocumentIds) {
+        String sourceNodeId = "doc_" + sourceDocumentId;
+
+        graphEdgeRepository.deleteByTopicIdAndSourceAndLabel(
+                topicId,
+                sourceNodeId,
+                GraphEdgeType.LINKS_TO
+        );
+
+        if (targetDocumentIds == null || targetDocumentIds.isEmpty()) {
+            return;
+        }
+
+        for (String targetDocumentId : targetDocumentIds) {
+            if (targetDocumentId == null || targetDocumentId.isBlank()) continue;
+            if (targetDocumentId.equals(sourceDocumentId)) continue;
+
+            String targetNodeId = "doc_" + targetDocumentId;
+
+            GraphEdge edge = GraphEdge.builder()
+                    .id(sourceNodeId + "__links_to__" + targetNodeId)
+                    .topicId(topicId)
+                    .source(sourceNodeId)
+                    .target(targetNodeId)
+                    .label(GraphEdgeType.LINKS_TO)
+                    .dashed(false)
+                    .fill("#7f11e0")
+                    .createdBy("USER")
+                    .build();
+
+            graphEdgeRepository.save(edge);
+        }
     }
 
     @Override
@@ -118,6 +157,45 @@ public class GraphServiceImpl implements GraphService {
 
         return new TopicKnowledgeGraphResponse(nodes, edges);
     }
+
+    @Override
+    public void cleanupOrphanConceptNodes(String topicId) {
+
+        System.out.println("Running orphan concept cleanup for topicId=" + topicId);
+        List<GraphNode> conceptNodes = graphNodeRepository.findByTopicIdAndType(
+                topicId,
+                GraphNodeType.CONCEPT
+        );
+
+
+        for (GraphNode conceptNode : conceptNodes) {
+
+            boolean stillReferenced = graphEdgeRepository.existsByTopicIdAndTargetAndLabel(
+                    topicId,
+                    conceptNode.getId(),
+                    GraphEdgeType.MENTIONS
+            );
+
+            if (!stillReferenced) {
+                System.out.println("Deleting orphan concept node: " + conceptNode.getLabel());
+                graphNodeRepository.delete(conceptNode);
+            }
+        }
+    }
+
+    @Override
+    public void removeDocumentFromGraph(String topicId, String documentId) {
+        String documentNodeId = "doc_" + documentId;
+
+        graphEdgeRepository.deleteByTopicIdAndSource(topicId, documentNodeId);
+        graphEdgeRepository.deleteByTopicIdAndTarget(topicId, documentNodeId);
+
+        graphNodeRepository.findById(documentNodeId)
+                .ifPresent(graphNodeRepository::delete);
+
+        cleanupOrphanConceptNodes(topicId);
+    }
+
 
     private String normalizeConcept(String value) {
         return value.trim()

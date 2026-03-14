@@ -21,4 +21,11 @@ public interface GraphEdgeRepository extends MongoRepository<GraphEdge, String> 
     void deleteByTopicId(String topicId);
 
     void deleteByTopicIdAndSource(String topicId, String source);
+
+    boolean existsByTopicIdAndTargetAndLabel(String topicId, String target, GraphEdgeType label);
+    void deleteByTopicIdAndSourceAndLabel(String topicId, String source, GraphEdgeType label);
+
+
+
+    void deleteByTopicIdAndTarget(String topicId, String target);
 }
