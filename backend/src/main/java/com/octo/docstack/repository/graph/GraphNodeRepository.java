@@ -1,8 +1,7 @@
 package com.octo.docstack.repository.graph;
 
-import com.octo.docstack.entities.graph.GraphEdge;
-import com.octo.docstack.entities.graph.GraphNode;
-import com.octo.docstack.entities.graph.GraphNodeType;
+import com.octo.docstack.models.graph.GraphNode;
+import com.octo.docstack.models.graph.GraphNodeType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

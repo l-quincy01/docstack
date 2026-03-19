@@ -4,11 +4,10 @@ import AddDocument from "@/components/documents/dialogs/add-document";
 import DocumentCard from "@/components/documents/document-card";
 import { Button } from "@/components/ui/button";
 import { useDocumentsByTopicQuery } from "@/hooks/document/useDocument";
-import { useTopicsQuery } from "@/hooks/topics/useTopics";
+
 import { Waypoints } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import React, { useState } from "react";
 
 export default function Page() {
   const params = useParams<{ topicId: string }>();
@@ -16,20 +15,11 @@ export default function Page() {
   const topicId = params.topicId;
 
   const {
-    data: topics = [],
-    isLoading: isTopicLoading,
-    isError: isTopicError,
-    error: topicError,
-  } = useTopicsQuery();
-
-  const {
     data: documents = [],
     isLoading,
     isError,
     error,
   } = useDocumentsByTopicQuery(topicId);
-
-  const topicTitle = topics.find((topic) => topic.id === topicId);
 
   return (
     <div className="flex flex-col gap-8">

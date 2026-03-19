@@ -1,27 +1,13 @@
 "use client";
 import AddDocumentDashboard from "@/components/documents/dialogs/add-document-dashboard";
 import DocumentCard from "@/components/documents/document-card";
-import {
-  useActiveDocumentsByUserQuery,
-  useDocumentsByUserQuery,
-} from "@/hooks/document/useDocument";
+import { useActiveDocumentsByUserQuery } from "@/hooks/document/useDocument";
 import { useMyProfile } from "@/hooks/profile/useProfile";
-import { useAuth } from "@clerk/nextjs";
-
-import { Plus } from "lucide-react";
-import React, { useEffect } from "react";
 
 export default function Page() {
-  const { getToken } = useAuth();
+  const { data, isLoading } = useMyProfile();
 
-  const { data, isLoading, isError, error } = useMyProfile();
-
-  const {
-    data: userDocuments,
-    isLoading: isDocumentsLoading,
-    isError: isDocumentsError,
-    error: errorDocuments,
-  } = useActiveDocumentsByUserQuery();
+  const { data: userDocuments } = useActiveDocumentsByUserQuery();
 
   function getTimeOfDayMessage(): string {
     const hour = new Date().getHours();

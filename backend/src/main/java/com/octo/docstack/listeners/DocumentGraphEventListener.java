@@ -1,7 +1,7 @@
 package com.octo.docstack.listeners;
 
 import com.octo.docstack.dto.graph.DocumentSavedEvent;
-import com.octo.docstack.service.DocumentGraphSyncService;
+import com.octo.docstack.service.graph.DocumentGraphSyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

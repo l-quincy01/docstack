@@ -16,6 +16,7 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { IconDots, IconTrash, IconPencil } from "@tabler/icons-react";
@@ -26,13 +27,27 @@ import {
   useTopicsQuery,
 } from "@/hooks/topics/useTopics";
 import { toast } from "sonner";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronRight } from "lucide-react";
+import {
+  useActiveDocumentsByUserQuery,
+  useDocumentQuery,
+  useDocumentsByTopicQuery,
+} from "@/hooks/document/useDocument";
 
 export function NavTopics() {
   const { data: topics = [], isLoading, isError, error } = useTopicsQuery();
   const deleteTopicMutation = useDeleteTopicMutation();
   const router = useRouter();
   const pathname = usePathname();
+  const params = useParams<{ topicId: string; documentId: string }>();
+
+  const { data: documents = [] } = useActiveDocumentsByUserQuery();
 
   const [renameOpenTopicId, setRenameOpenTopicId] = useState<string | null>(
     null
@@ -58,6 +73,9 @@ export function NavTopics() {
       toast.error(e?.message ?? "Failed to delete topic");
     }
   }
+
+  console.log(params);
+  console.log("topicId 1:", params.topicId);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -109,14 +127,53 @@ export function NavTopics() {
           return (
             <SidebarMenuItem key={topic.id}>
               <div className="flex items-center gap-1 w-full">
-                <SidebarMenuButton
-                  className="data-[active=true]:bg-transparent flex-1"
-                  asChild
+                <Collapsible
+                  className="group/collapsible"
+                  defaultOpen={params.topicId === topic.id}
                 >
-                  <Link href={`/topics/${topic.id}`}>
-                    <div className="line-clamp-1 font-bold">{topic.title}</div>
-                  </Link>
-                </SidebarMenuButton>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      className={`data-[active=true]:bg-transparent flex-1 ${
+                        params.topicId === topic.id ? "bg-muted" : ""
+                      }`}
+                      asChild
+                    >
+                      <div className="flex flex-row items-center">
+                        <ChevronRight className="transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                        <Link
+                          href={`/topics/${topic.id}`}
+                          className="flex items-center gap-2"
+                        >
+                          <div className="line-clamp-1 font-xs text-blue-600 dark:text-blue-400">
+                            {topic.title}
+                          </div>
+                        </Link>
+                      </div>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {documents
+                        .filter((doc) => doc.topicId === topic.id)
+                        .map((doc) => (
+                          <SidebarMenuButton
+                            key={doc.id}
+                            className={`data-[active=true]:bg-transparent flex-1 ${
+                              params.documentId === doc.id ? "bg-muted" : ""
+                            }`}
+                            asChild
+                          >
+                            <Link href={`/topics/${topic.id}/${doc.id}`}>
+                              <div className="line-clamp-1 font-medium">
+                                {doc.title}
+                              </div>
+                            </Link>
+                          </SidebarMenuButton>
+                        ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </Collapsible>
 
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
