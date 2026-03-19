@@ -1,8 +1,8 @@
 package com.octo.docstack.repository.document;
 
-import com.octo.docstack.entities.document.DocItem;
+import com.octo.docstack.models.document.DocItem;
 
-import com.octo.docstack.entities.document.DocItemStatus;
+import com.octo.docstack.models.document.DocItemStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

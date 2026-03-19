@@ -31,3 +31,9 @@ app:
     secret-access-key: ${R2_SECRET_ACCESS_KEY}
     bucket: ${R2_BUCKET}
     public-base-url: ${R2_PUBLIC_BASE_URL}
+
+openai:
+  api-key: ${OPENAI_API_KEY}
+  base-url: https://api.openai.com/v1
+  model: gpt-4.1-mini
+  timeout-seconds: 30

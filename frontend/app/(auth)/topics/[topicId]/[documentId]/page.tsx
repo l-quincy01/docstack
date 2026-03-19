@@ -3,7 +3,7 @@
 import { PlateEditor } from "@/components/editor/plate-editor";
 import { useParams } from "next/navigation";
 import { useDocumentQuery } from "@/hooks/document/useDocument";
-import { Toaster } from "sonner";
+
 import { useMemo } from "react";
 
 export default function Page() {

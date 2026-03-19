@@ -1,8 +1,7 @@
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SiteHeader } from "@/components/sidebar/site-header";
-import { Sidebar, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { Providers } from "@/app/provider/providers";
-import { SiteTabs } from "@/components/sidebar/site-tabs";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,7 +19,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className=" bg-background/90 border rounded-md w-full h-[97vh] overflow-y-scroll overflow-x-hidden scrollbar-hide m-2">
             {" "}
             <main className="flex-1 w-full mx-auto container px-4 py-2 scrollbar-hide">
-              {/* <SiteTabs> </SiteTabs> */}
               <SiteHeader />
               {children}
             </main>

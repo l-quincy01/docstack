@@ -1,6 +1,6 @@
 package com.octo.docstack.repository.profile;
 
-import com.octo.docstack.domain.Profile;
+import com.octo.docstack.models.profile.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

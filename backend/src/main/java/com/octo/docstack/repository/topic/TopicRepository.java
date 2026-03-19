@@ -1,7 +1,7 @@
 package com.octo.docstack.repository.topic;
 
-import com.octo.docstack.entities.topic.Topic;
-import com.octo.docstack.entities.topic.TopicTitleProjection;
+import com.octo.docstack.models.topic.Topic;
+import com.octo.docstack.models.topic.TopicTitleProjection;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
