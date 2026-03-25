@@ -5,6 +5,7 @@ import AddDocumentTemplates from "@/components/documents/dialogs/add-document-te
 import DocumentCard from "@/components/documents/document-card";
 import { Button } from "@/components/ui/button";
 import { useDocumentsByTopicQuery } from "@/hooks/document/useDocument";
+import { templateSeeds } from "@/template_data/template";
 
 import { Waypoints } from "lucide-react";
 import Link from "next/link";
@@ -33,6 +34,9 @@ export default function Page() {
       <div className="flex flex-row justify-between items-end">
         <div className="flex flex-rows items-end shrink-0 gap-4 overflow-hidden">
           <AddDocument />
+          {templateSeeds.slice(0, 5).map((templateData, index) => (
+            <AddDocumentTemplates key={index} templateData={templateData} />
+          ))}
         </div>
 
         <Link href={`/topics/${topicId}/graph`}>
