@@ -1,6 +1,7 @@
 "use client";
 
 import AddDocument from "@/components/documents/dialogs/add-document";
+import AddDocumentTemplates from "@/components/documents/dialogs/add-document-templates";
 import DocumentCard from "@/components/documents/document-card";
 import { Button } from "@/components/ui/button";
 import { useDocumentsByTopicQuery } from "@/hooks/document/useDocument";
@@ -22,15 +23,18 @@ export default function Page() {
   } = useDocumentsByTopicQuery(topicId);
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-row w-full justify-center"></div>
+    <div className="flex flex-col gap-8 ">
+      <div className="flex flex-row w-full justify-center "></div>
 
       <div className="text-muted-foreground font-bold">
         Start a new document
       </div>
 
       <div className="flex flex-row justify-between items-end">
-        <AddDocument />
+        <div className="flex flex-rows items-end shrink-0 gap-4 overflow-hidden">
+          <AddDocument />
+        </div>
+
         <Link href={`/topics/${topicId}/graph`}>
           <Button variant="ghost">
             <Waypoints />

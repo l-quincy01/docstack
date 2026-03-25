@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useDocumentQuery } from "@/hooks/document/useDocument";
 
 import { useMemo } from "react";
+import { normalizeNodeId } from "platejs";
 
 export default function Page() {
   const params = useParams<{ documentId: string }>();
