@@ -14,11 +14,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           } as React.CSSProperties
         }
       >
-        <div className="flex  h-screen  w-full ">
+        <div className="flex min-h-screen w-full overflow-hidden">
           <AppSidebar variant="inset" collapsible="offcanvas" />
-          <div className=" bg-background/90 border rounded-md w-full h-[97vh] overflow-y-scroll overflow-x-hidden scrollbar-hide m-2">
-            {" "}
-            <main className="flex-1 w-full mx-auto container px-4 py-2 scrollbar-hide">
+
+          <div className="m-2 flex-1 min-h-0 rounded-md border bg-background/90 overflow-y-auto overflow-x-hidden scrollbar-hide">
+            <main className="container mx-auto w-full px-4 py-2">
               <SiteHeader />
               {children}
             </main>
