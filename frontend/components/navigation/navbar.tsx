@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { FileStack, Menu, X } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
@@ -43,7 +43,9 @@ export const HeroHeader = () => {
                 aria-label="home"
                 className="flex items-center space-x-2"
               >
-                <Logo />
+                <div className="flex flex-row gap-2 items-center font-extrabold text-[2.5rem]">
+                  Docstack
+                </div>
               </Link>
 
               <button
@@ -94,24 +96,16 @@ export const HeroHeader = () => {
                   className={cn(isScrolled && "lg:hidden")}
                 >
                   <Link href="/login">
-                    <span>Login</span>
+                    <span>Sign Up/Login</span>
                   </Link>
                 </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="#">
-                    <span>Sign Up</span>
-                  </Link>
-                </Button>
+
                 <Button
                   asChild
                   size="sm"
                   className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
                 >
-                  <Link href="#">
+                  <Link href="/login">
                     <span>Get Started</span>
                   </Link>
                 </Button>
