@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { FileStack, Menu, X } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
@@ -43,7 +43,9 @@ export const HeroHeader = () => {
                 aria-label="home"
                 className="flex items-center space-x-2"
               >
-                <Logo />
+                <div className="flex flex-row gap-2 items-center font-extrabold text-[2.5rem]">
+                  Docstack
+                </div>
               </Link>
 
               <button
