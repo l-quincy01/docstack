@@ -14,113 +14,293 @@ BudgetlyAI makes sense of your finances without having to turn budgeting into a 
 
 | Welcome | Sign Up |
 |--------|--------|
-| <img src="./screenshots/1.png" width="85%" /> | <img src="./screenshots/1c.png" width="85%" /> |
+| <img src="./frontend/screenshots/v0.14/0.png" width="85%" /> | <img src="./frontend/screenshots/v0.14/0a.png" width="85%" /> |
 
-| Sign Up (Email OTP) | Login |
+
+<!-- | Sign Up (Email OTP) | Login |
 |-------------------|-------|
-| <img src="./screenshots/1d.png" width="85%" /> | <img src="./screenshots/1b.png" width="85%" /> |
+| <img src="./frontend/screenshots/v0.14/0b.png" width="85%" /> | <img src="./screenshots/1b.png" width="85%" /> | -->
+
+| Dashboard | Editor() |
+|--------|--------|
+| <img src="./frontend/screenshots/v0.14/2.png" width="85%" /> | <img src="./frontend/screenshots/v0.14/1.png" width="85%" /> |
+
+| Graph view | Editor() |
+|--------|--------|
+| <img src="./frontend/screenshots/v0.14/5.png" width="85%" /> | <img src="./frontend/screenshots/v0.14/6.png" width="85%" /> |
+
+| Editor() | Editor() |
+|--------|--------|
+| <img src="./frontend/screenshots/v0.14/3.png" width="85%" /> | <img src="./frontend/screenshots/v0.14/4.png" width="85%" /> |
 
 
 
+# DocStack — Architecture Overview
 
-# Backend Architecture
+DocStack is a knowledge workspace application that allows users to create topics, write documents, and build knowledge graphs from document content.  
 
-BudgetlyAI process statements through an AI pipeline, extracts spending data from the statements and persists this extracted data into mongoDB.
+The system uses a Spring Boot backend, MongoDB storage, Clerk authentication and AI for concept distillation.
 
- Two services:
-- `core-service`: ASP.NET Core API for authentication, dashboards and budgets.
-- `ai-service`: Node  service that runs the LLM extraction workflow and writes dashboard aggregates to MongoDB.
+The backend is responsible for:
 
-## Folder Structure & Tech Stack
+- User-scoped data access
+- Topic & document management
+- Knowledge graph generation
+- Concept distillation 
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|--------|------------|
+| Backend | Java, Spring Boot |
+| Database | MongoDB |
+| Auth | Clerk JWT |
+| Storage | Cloudflare R2 |
+| AI | OpenAI API |
+| Build | Maven |
+| Container | Docker / Docker Compose |
+
+---
+
+## Backend Folder Structure
+
 ```
-├── core-service
-│   ├── Controllers
-│   ├── Data
-│   ├── Infrastructure
-│   ├── Models
-│   └── Services
-└── ai-service
-    ├── src
-    │   ├── config
-    │   ├── controllers
-    │   ├── db
-    │   ├── llm
-    │   ├── mappers
-    │   ├── routes
-    │   └── services
-    └── package.json
+docstack-backend
+├── docker-compose.yml
+├── pom.xml
+├── src/main/java/com/octo/docstack
+│
+├── common
+│   └── CurrentUserService
+│
+├── config
+│   ├── SecurityConfig
+│   ├── MongoConfig
+│   ├── R2Config
+│   ├── AiConfig
+│   ├── HttpClientConfig
+│   └── AsyncConfig
+│
+├── controller
+│   ├── document
+│   ├── topic
+│   ├── graph
+│   └── profile
+│
+├── dto
+│   ├── document
+│   ├── topic
+│   ├── graph
+│   ├── profile
+│   └── ai
+│
+├── models
+│   ├── document
+│   ├── topic
+│   ├── graph
+│   └── profile
+│
+├── repository
+│   ├── document
+│   ├── topic
+│   ├── graph
+│   └── profile
+│
+├── service
+│   ├── document
+│   ├── topic
+│   ├── graph
+│   ├── profile
+│   └── ai
+│
+└── listeners
+    └── DocumentGraphEventListener
 ```
 
-| Language | Framework / Runtime |
-|----------|---------------------|
-| C# | ASP.NET Core |
-| TypeScript | NodeJS (Express)  |
-| SQL | PostgreSQL (EF Core) |
+---
 
-<br>
+## Authentication & Authorization
 
+Clerk handles authentication.  
+The frontend sends a JWT to the backend, and Spring Security validates it.
 
-
-### Authentication & Authorization
-Clerk handles email-first authentication. Users receive OTP codes via email the .NET API validates Clerk JWTs and scopes data per user.
+Each request is scoped to the current user.
 
 ```mermaid
 flowchart LR
-    FE[Frontend] -- email OTP login --> Clerk[[Clerk Auth]]
-    API[[core-service]] -- validates JWT --> Clerk
-    API --> Postgres[(PostgreSQL)]
+    FE[Frontend] -->|JWT| API[Spring Boot API]
+    API --> Clerk[[Clerk JWKS]]
     API --> Mongo[(MongoDB)]
-    FE -->|JWT| API
+    API --> R2[(Cloudflare R2)]
 ```
 
-### Sign in/Sign up Sequence
+---
+
+## Sign In Flow
+
 ```mermaid
 sequenceDiagram
     actor Client
-    Client ->> ClerkAuth: start email sign-in (OTP)
-    ClerkAuth ->> Client: send OTP to email
-    Client ->> ClerkAuth: verify OTP
-    ClerkAuth ->> Client: issue session + JWT
+    participant Clerk
+    participant Springboot
+    participant Mongo
 
-    Client ->> API: request account & dashboards with JWT
-    alt first-time user
-        API ->> ClerkAuth: fetch user info
-        API ->> Postgres: create user-owned rows
-        API ->> Mongo: init dashboard space
-        API -->> Client: mark as new user
-    else existing user
-        API ->> Postgres: load budgets/transactions
-        API ->> Mongo: load dashboard aggregates
-    end
-    API -->> Client: return account + dashboard data
+    Client ->> Clerk: Sign in (OTP / email)
+    Clerk -->> Client: Session + JWT
+
+    Client ->> Springboot: Request with JWT
+    Springboot ->> Clerk: Validate token
+    Springboot ->> Mongo: Load user data
+    Springboot -->> Client: Response
 ```
 
-### Ingestion & AI Pipeline
+---
+
+## Topic & Document Flow
+
+Users create topics → create documents → edit content → autosave → graph sync
+
 ```mermaid
 sequenceDiagram
     participant FE as Frontend
-    participant API as core-service
-    participant AI as ai-service
-    participant LLM as OpenAI
-    participant M as MongoDB
+    participant Springboot
+    participant Mongo
+    participant Graph
+    participant AI
 
-    FE->>API: POST /api/dashboards (multipart PDFs, JWT)
-    API->>AI: Forward PDFs + x-user-id header
-    AI->>AI: Validate request (multer, guards)
-    AI->>LLM: Run extractors (tx, income/expense, categories, overview)
-    LLM-->>AI: Structured JSON arrays
-    AI->>M: Insert/append dashboard doc + aggregates
-    AI-->>API: dashboardId + counts
-    API-->>FE: dashboard created/updated
+    FE->>Springboot: Create topic
+    Springboot->>Mongo: Save topic
+
+    FE->>Springboot: Create document
+    Springboot->>Mongo: Save document
+
+    FE->>Springboot: Update content
+    Springboot->>Mongo: Save content
+
+    Springboot->>Graph: Publish DocumentSavedEvent
+    Graph->>AI: Extract concepts
+    AI-->>Graph: Concepts
+    Graph->>Mongo: Update nodes & edges
 ```
 
-### Data Flow
+---
+
+## Knowledge Graph Architecture
+
+Each topic has its own graph.
+
+Nodes:
+- DOCUMENT
+- CONCEPT
+
+Edges:
+- LINKS_TO
+- MENTIONS
+
+
+
+Graph is rebuilt when a document is saved.
+
+---
+
+## Document Save → Graph Sync
+
+Document save triggers an event.
+
+```
+DocumentService
+   ↓
+DocumentSavedEvent
+   ↓
+DocumentGraphEventListener
+   ↓
+DocumentGraphSyncService
+   ↓
+ConceptExtractionService (OpenAI)
+   ↓
+GraphService
+```
+
+---
+
+## Thumbnail Upload Flow
+
+Thumbnails are stored in Cloudflare R2 using presigned URLs.
+
+```mermaid
+sequenceDiagram
+    FE->>API: request presign
+    API->>R2: generate URL
+    API-->>FE: presigned URL
+
+    FE->>R2: PUT image
+    FE->>API: save thumbnail URL
+    API->>Mongo: update document
+```
+
+---
+
+## AI Concept Extraction
+
+Concepts are extracted from document text.
+
+```
+Plate JSON → Text Extractor
+Text → LLM (OpenAI)
+LLM → Concepts
+Concepts → Graph nodes
+```
+
+Services involved:
+
+- `PlateTextExtractor`
+- `ConceptExtractionService`
+- `LlmGateway`
+- `GraphService`
+
+---
+
+## Data Flow
+
 ```mermaid
 flowchart LR
-    FE[Frontend] -->|JWT| API[core-service]
-    API -->|budgets + transactions| PSQL[(PostgreSQL)]
-    API -->|read dashboards| MONGO[(MongoDB)]
-    API -->|ingest PDFs| AI[ai-service]
-    AI -->|LLM extraction| OpenAI[[OpenAI Chat Completions]]
-    AI -->|write dashboards| MONGO
+
+FE[Frontend]
+API[Spring Boot]
+MONGO[(MongoDB)]
+R2[(Cloudflare R2)]
+OPENAI[[OpenAI API]]
+
+FE --> API
+API --> MONGO
+API --> R2
+API --> OPENAI
 ```
+
+---
+
+
+## Goals of the Architecture
+
+- Clean layered design
+- User-scoped security
+- Event-driven graph sync
+- Externalized AI calls
+- Cloud storage for media
+- Simple Mongo schema
+- Easy to extend
+
+---
+
+## Future Improvements
+
+- Vector search
+- Graph queries
+- Full-text search
+- Realtime sync
+- Multi-workspace support
+- Background job queue
+- Caching layer
+
