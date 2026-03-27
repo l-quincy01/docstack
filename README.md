@@ -1,9 +1,20 @@
 
+![Banner](./frontend/screenshots/v0.14/0.png?raw=true)
+
+# Docstack
+
+![Backend](https://img.shields.io/badge/backend-SpringBoot-green)
+![Database](https://img.shields.io/badge/database-MongoDB-darkgreen)
+
 # Overview
 
-BudgetlyAI is a simple personal finance app that helps you see how your money is spent and to create budgets that can help you manage your money better. 
+DocStack is a knowledge workspace application that allows users to organise ideas, write documents, and build connected knowledge inside structured topics.
 
-BudgetlyAI makes sense of your finances without having to turn budgeting into a second job. The app does the boring work of extracting transactions, organising them by month and category, and presenting them in a way that actually makes sense.
+Instead of scattered notes and disconnected files, DocStack keeps everything in one place. Users can create topics, write rich documents, link content together, and automatically generate knowledge graphs that show how concepts relate to each other.
+
+DocStack removes the friction from managing information. The app handles document storage, autosave, concept extraction, and graph generation automatically, so you can focus on thinking, learning, and building knowledge rather than organising files.
+
+The goal of DocStack is to make personal knowledge feel structured, visual, and easy to navigate, without turning note-taking into a complicated process.
 
 
 
@@ -27,26 +38,26 @@ BudgetlyAI makes sense of your finances without having to turn budgeting into a 
 
 | Graph view | Editor() |
 |--------|--------|
-| <img src="./frontend/screenshots/v0.14/5.png" width="85%" /> | <img src="./frontend/screenshots/v0.14/6.png" width="85%" /> |
+| <img src="./frontend/screenshots/v0.14/3.png" width="85%" /> | <img src="./frontend/screenshots/v0.14/6.png" width="85%" /> |
 
 | Editor() | Editor() |
 |--------|--------|
-| <img src="./frontend/screenshots/v0.14/3.png" width="85%" /> | <img src="./frontend/screenshots/v0.14/4.png" width="85%" /> |
+| <img src="./frontend/screenshots/v0.14/5.png" width="85%" /> | <img src="./frontend/screenshots/v0.14/4.png" width="85%" /> |
 
 
 
-# DocStack — Architecture Overview
+# Backend Architecture 
 
-DocStack is a knowledge workspace application that allows users to create topics, write documents, and build knowledge graphs from document content.  
+DocStack is a knowledge workspace application that allows users to create topics, write documents and build knowledge graphs (create connections between documents).  
 
 The system uses a Spring Boot backend, MongoDB storage, Clerk authentication and AI for concept distillation.
 
-The backend is responsible for:
+<!-- The backend is responsible for:
 
 - User-scoped data access
 - Topic & document management
 - Knowledge graph generation
-- Concept distillation 
+- Concept distillation  -->
 
 ---
 
@@ -180,8 +191,9 @@ sequenceDiagram
     Springboot->>Mongo: Save content
 
     Springboot->>Graph: Publish DocumentSavedEvent
-    Graph->>AI: Extract concepts
-    AI-->>Graph: Concepts
+    Graph->>AI: Distill concepts
+    AI-->>Graph: Return concepts
+    Graph-->>Graph: Create links
     Graph->>Mongo: Update nodes & edges
 ```
 
@@ -205,7 +217,7 @@ Graph is rebuilt when a document is saved.
 
 ---
 
-## Document Save → Graph Sync
+<!-- ## Document Save → Graph Sync
 
 Document save triggers an event.
 
@@ -223,7 +235,7 @@ ConceptExtractionService (OpenAI)
 GraphService
 ```
 
----
+--- -->
 
 ## Thumbnail Upload Flow
 
@@ -231,16 +243,16 @@ Thumbnails are stored in Cloudflare R2 using presigned URLs.
 
 ```mermaid
 sequenceDiagram
-    FE->>API: request presign
+    Frontend->>API: request presign
     API->>R2: generate URL
     API-->>FE: presigned URL
 
-    FE->>R2: PUT image
+    Frontend->>R2: PUT image
     FE->>API: save thumbnail URL
     API->>Mongo: update document
 ```
 
----
+<!-- ---
 
 ## AI Concept Extraction
 
@@ -248,7 +260,7 @@ Concepts are extracted from document text.
 
 ```
 Plate JSON → Text Extractor
-Text → LLM (OpenAI)
+Text → LLM 
 LLM → Concepts
 Concepts → Graph nodes
 ```
@@ -258,7 +270,7 @@ Services involved:
 - `PlateTextExtractor`
 - `ConceptExtractionService`
 - `LlmGateway`
-- `GraphService`
+- `GraphService` -->
 
 ---
 
@@ -282,25 +294,15 @@ API --> OPENAI
 ---
 
 
-## Goals of the Architecture
-
-- Clean layered design
-- User-scoped security
-- Event-driven graph sync
-- Externalized AI calls
-- Cloud storage for media
-- Simple Mongo schema
-- Easy to extend
-
----
 
 ## Future Improvements
 
 - Vector search
 - Graph queries
 - Full-text search
-- Realtime sync
-- Multi-workspace support
-- Background job queue
-- Caching layer
+- Realtime collaboration
+- Canvas
+- Richer editor
+ 
+
 
