@@ -12,9 +12,9 @@ DocStack is a knowledge workspace application that allows users to organise idea
 
 Instead of scattered notes and disconnected files, DocStack keeps everything in one place. Users can create topics, write rich documents, link content together, and automatically generate knowledge graphs that show how concepts relate to each other.
 
-DocStack removes the friction from managing information. The app handles document storage, autosave, concept extraction, and graph generation automatically, so you can focus on thinking, learning, and building knowledge rather than organising files.
+<!-- DocStack removes the friction from managing information. The app handles document storage, autosave, concept extraction, and graph generation automatically, so you can focus on thinking, learning, and building knowledge rather than organising files.
 
-The goal of DocStack is to make personal knowledge feel structured, visual, and easy to navigate, without turning note-taking into a complicated process.
+The goal of DocStack is to make personal knowledge feel structured, visual, and easy to navigate, without turning note-taking into a complicated process. -->
 
 
 
